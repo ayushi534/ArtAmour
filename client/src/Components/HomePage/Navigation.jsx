@@ -17,12 +17,12 @@ const Navigation = () => {
               <button  className='hover:text-Redwood font-medium transition-colors'>Art Categories ▼ </button>
                 {openCategory && (
               <ul className='absolute left-0 mt-2 bg-Beige text-Brown rounded-lg shadow-lg w-80 z-50'>
-                <li className='px-4 py-2 hover:bg-[#D7CCC8] cursor-pointer'>Decorative Arts</li>
-                <li className='px-4 py-2 hover:bg-[#D7CCC8] cursor-pointer'>Traditional Arts</li>
-                <li className='px-4 py-2 hover:bg-[#D7CCC8] cursor-pointer'>Handcrafted Creations</li>
-                <li className='px-4 py-2 hover:bg-[#D7CCC8] cursor-pointer'>Potrait</li>
-                <li className='px-4 py-2 hover:bg-[#D7CCC8] cursor-pointer'>Modern Art</li>
-                <li className='px-4 py-2 hover:bg-[#D7CCC8] cursor-pointer'>Pichwai Art</li>
+                <li className='px-4 py-2 hover:bg-yellow-50 cursor-pointer'>Decorative Arts</li>
+                <li className='px-4 py-2 hover:bg-yellow-50 cursor-pointer'>Traditional Arts</li>
+                <li className='px-4 py-2 hover:bg-yellow-50 cursor-pointer'>Handcrafted Creations</li>
+                <li className='px-4 py-2 hover:bg-yellow-50 cursor-pointer'>Potrait</li>
+                <li className='px-4 py-2 hover:bg-yellow-50 cursor-pointer'>Modern Art</li>
+                <li className='px-4 py-2 hover:bg-yellow-50 cursor-pointer'>Pichwai Art</li>
               </ul>
                 )}
 
@@ -33,11 +33,11 @@ const Navigation = () => {
               onMouseLeave={() => setOpenType(false)}>
               <button className='hover:text-Redwood font-medium transition-colors'>Art Types ▼</button>
                 {openType && (
-              <ul className='absolute left-0 mt-2 bg-Cream text-Brown rounded-lg shadow-lg w-80 z-50'>
-                <li className='px-4 py-2 hover:bg-[#D7CCC8] cursor-pointer'>Medium & Surface</li>
-                <li className='px-4 py-2 hover:bg-[#D7CCC8] cursor-pointer'>Shapes</li>
-                <li className='px-4 py-2 hover:bg-[#D7CCC8] cursor-pointer'>Types</li>
-                <li className='px-4 py-2 hover:bg-[#D7CCC8] cursor-pointer'>Size</li>    
+              <ul className='absolute left-0 mt-2 bg-Beige text-Brown rounded-lg shadow-lg w-80 z-50'>
+                <li className='px-4 py-2 hover:bg-yellow-50 cursor-pointer'>Medium & Surface</li>
+                <li className='px-4 py-2 hover:bg-yellow-50 cursor-pointer'>Shapes</li>
+                <li className='px-4 py-2 hover:bg-yellow-50 cursor-pointer'>Types</li>
+                <li className='px-4 py-2 hover:bg-yellow-50 cursor-pointer'>Size</li>    
               </ul>
                 )}
             </div>

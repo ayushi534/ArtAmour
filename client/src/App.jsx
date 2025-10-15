@@ -8,6 +8,9 @@ import Navigation from "./Components/HomePage/Navigation";
 import Footer from "./Components/common/Footer";
 import Pagenotfound from "./Components/Pagenotfound"
 import AdminNav from "./Admin/Dashboard/AdminNav"
+import AdminSidebar from "./Admin/Dashboard/AdminSidebar";
+import AdminDashboard from "./Admin/Dashboard/AdminDashboard";
+import ProductManager from "./Admin/Dashboard/ProductManager";
 
 
 /*
@@ -37,10 +40,12 @@ function App(){
      <Route path="/Signin" element={<Signin/>}/> 
      <Route path="/Landingpage" element={<Landingpage/>}/>
      <Route path="*" element={<Pagenotfound/>}/>
+     <Route path="/admin" element={<AdminDashboard/>}/>
     </Routes>
 
     <Footer/>
-    <AdminNav/>
+    
+
     
    </>
   );
