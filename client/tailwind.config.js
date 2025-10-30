@@ -15,7 +15,11 @@ export default {
         BurntGold :'#C9A14A',
         MutedGold :'#C6A664',
         Gold: '#D4AF37',
-
+        Copper:'#b84300',
+        MetalicGold: '#dBB42C',
+        AntiqueWhite:'#ffebd6',
+        Tan:'#e7bc91'
+       
       }
     },
   },

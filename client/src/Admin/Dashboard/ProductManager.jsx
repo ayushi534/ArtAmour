@@ -1,95 +1,9 @@
-import React, { useState, useEffect } from "react";
-import {
-  PlusCircle,
-  Pencil,
-  Trash2,
-  House,
-  ShoppingBag,
-  Notebook,
-  LogOut,
-} from "lucide-react";
+import React, { useState } from "react";
+import { PlusCircle, Pencil, Trash } from "lucide-react";
 
- const colors = {
-  darkCream: "#E5D3B3",
-  brown: "#5C4033",
-  beige: "#F5F5DC",
- };
-// ---------------------------------------------------------
-// 🏠 MAIN DASHBOARD COMPONENT
-// ---------------------------------------------------------
-const Dashboard = () => {
-  return (
-    <div className="min-h-screen flex font-sans bg-[${colors.beige}]">
-      <Sidebar />
-      <main className="flex-1 ml-64 bg-[${colors.beige}]">
-        <Header />
-        <ProductListing />
-      </main>
-    </div>
-  );
-};
-
-// ---------------------------------------------------------
-// 🎯 SIDEBAR COMPONENT
-// ---------------------------------------------------------
-const Sidebar = () => {
-  return (
-    <div
-      className="w-64 bg-[${colors.darkCream}] text-[${colors.brown}] fixed h-full px-4 py-4 shadow-lg"
-      style={{ backgroundColor: colors.darkCream, color: colors.brown }}
-    >
-      <h1 className="text-2xl font-bold mb-6">ArtAmour Admin</h1>
-      <ul className="font-semibold">
-        <li className="mb-3 hover:bg-[${colors.beige}] rounded-lg py-2 px-3 transition">
-          <a href="#" className="flex items-center">
-            <House className="w-5 h-5 mr-2" /> Dashboard
-          </a>
-        </li>
-        <li className="mb-3 hover:bg-[${colors.beige}] rounded-lg py-2 px-3 transition">
-          <a href="#" className="flex items-center">
-            <ShoppingBag className="w-5 h-5 mr-2" /> Products
-          </a>
-        </li>
-        <li className="mb-3 hover:bg-[${colors.beige}] rounded-lg py-2 px-3 transition">
-          <a href="#" className="flex items-center">
-            <Notebook className="w-5 h-5 mr-2" /> Reports
-          </a>
-        </li>
-        <li className="mt-8 hover:bg-[${colors.beige}] rounded-lg py-2 px-3 transition text-red-600">
-          <a href="#" className="flex items-center">
-            <LogOut className="w-5 h-5 mr-2" /> Logout
-          </a>
-        </li>
-      </ul>
-    </div>
-  );
-};
-
-// ---------------------------------------------------------
-// 🌸 HEADER COMPONENT
-// ---------------------------------------------------------
-const Header = () => {
-  return (
-    <header
-      className="bg-[${colors.darkCream}] text-[${colors.brown}] px-6 py-4 shadow-md flex justify-between items-center"
-      style={{ backgroundColor: colors.darkCream, color: colors.brown }}
-    >
-      <h1 className="text-2xl font-bold">Welcome, Admin 🎨</h1>
-      <p className="text-sm">Manage all ArtAmour Products</p>
-    </header>
-  );
-};
-
-// ---------------------------------------------------------
-// 🛍️ PRODUCT LISTING (CRUD OPERATIONS)
-// ---------------------------------------------------------
-const ProductListing = () => {
-  const [products, setProducts] = useState(() => {
-    // Load from localStorage initially
-    const stored = localStorage.getItem("artamourProducts");
-    return stored ? JSON.parse(stored) : [];
-  });
-  const [newProduct, setNewProduct] = useState({
+const ProductManager = () => {
+  const [products, setProducts] = useState([]);
+  const [formData, setFormData] = useState({
     title: "",
     description: "",
     size: "",
@@ -98,147 +12,201 @@ const ProductListing = () => {
   });
   const [editingIndex, setEditingIndex] = useState(null);
 
-  // Save to localStorage whenever products change
-  useEffect(() => {
-    localStorage.setItem("artamourProducts", JSON.stringify(products));
-  }, [products]);
+  // Handle input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
-  // Handle adding/updating product
-  const handleAddOrUpdate = () => {
-    if (!newProduct.title.trim()) return alert("Please enter a product title.");
+  // Handle image upload
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setFormData({ ...formData, image: imageUrl });
+    }
+  };
 
+  // Add or Update product
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    
     if (editingIndex !== null) {
-      // Edit mode
-      const updated = [...products];
-      updated[editingIndex] = newProduct;
-      setProducts(updated);
+      const updatedProducts = [...products];
+      updatedProducts[editingIndex] = formData;
+      setProducts(updatedProducts);
       setEditingIndex(null);
     } else {
-      // Add mode
-      setProducts([...products, newProduct]);
+      setProducts([...products, formData]);
     }
 
     // Reset form
-    setNewProduct({ title: "", description: "", size: "", color: "", image: "" });
+    setFormData({
+      title: "",
+      description: "",
+      size: "",
+      color: "",
+      image: "",
+    });
   };
 
-  // Handle delete
-  const handleDelete = (index) => {
-    if (window.confirm("Delete this product?")) {
-      const updated = products.filter((_, i) => i !== index);
-      setProducts(updated);
-    }
-  };
-
-  // Handle edit
+  // Edit product
   const handleEdit = (index) => {
-    setNewProduct(products[index]);
+    setFormData(products[index]);
     setEditingIndex(index);
   };
 
-  return (
-    <div className="p-6">
-      {/* Add / Edit Product Form */}
-      <div
-        className="bg-white p-4 rounded-xl shadow-md mb-8"
-        style={{ border: `2px solid ${colors.darkCream}` }}
-      >
-        <h2 className="text-xl font-bold text-[${colors.brown}] mb-3">
-          {editingIndex !== null ? "Edit Product" : "Add New Product"}
-        </h2>
+  // Delete product
+  const handleDelete = (index) => {
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      setProducts(products.filter((_, i) => i !== index));
+    }
+  };
 
+  return (
+    <div className="p-8 bg-Cream min-h-screen text-Brown">
+      <h1 className="text-3xl font-bold mb-6">Product Management</h1>
+
+      {/* Product Form */}
+      <form
+        onSubmit={handleSubmit}
+        className="bg-yellow-50 p-6 rounded-2xl shadow-md mb-8">
+       
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <input
             type="text"
-            placeholder="Title"
-            className="border p-2 rounded"
-            value={newProduct.title}
-            onChange={(e) => setNewProduct({ ...newProduct, title: e.target.value })}
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            placeholder="Product Title"
+            className="border p-2 rounded-md w-full"
+            required
           />
-          <input
-            type="text"
-            placeholder="Description"
-            className="border p-2 rounded"
-            value={newProduct.description}
-            onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="Size"
-            className="border p-2 rounded"
-            value={newProduct.size}
-            onChange={(e) => setNewProduct({ ...newProduct, size: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="Color"
-            className="border p-2 rounded"
-            value={newProduct.color}
-            onChange={(e) => setNewProduct({ ...newProduct, color: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="Image URL"
-            className="border p-2 rounded col-span-full"
-            value={newProduct.image}
-            onChange={(e) => setNewProduct({ ...newProduct, image: e.target.value })}
-          />
-        </div>
 
+          <input
+            type="text"
+            name="size"
+            value={formData.size}
+            onChange={handleChange}
+            placeholder="Size (e.g. inch, cm )"
+            className="border p-2 rounded-md w-full"
+          />
+
+          <input
+            type="text"
+            name="color"
+            value={formData.color}
+            onChange={handleChange}
+            placeholder="Color Selection (e.g. Red, Blue)"
+            className="border p-2 rounded-md w-full"
+          />
+
+          <textarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Product Description"
+            className="border p-2 rounded-md w-full "
+            rows="3"
+            required>
+            </textarea>
+
+          {/* ✅ Image Upload Section */}
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium mb-2">
+              Product Image
+            </label>
+
+            {/* Upload from device */}
+            <button
+              type="button"
+              onClick={() => document.getElementById("imageUpload").click()}
+              className="bg-Brown text-Cream px-4 py-2 rounded-md hover:bg-Redwood transition">
+              Choose Image from Your Device
+            </button>
+
+            <input
+              type="file"
+              id="imageUpload"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+            />
+
+            {/* ✅ OR Image URL input 
+            <input
+              type="text"
+              name="image"
+              value={formData.image}
+              onChange={handleChange}
+              placeholder="Or paste an image URL (e.g. https://example.com/photo.jpg)"
+              className="border p-2 rounded-md w-full mt-3"
+            />*/}
+
+            {/* ✅ Preview */}
+            {formData.image && (
+              <div className="mt-3">
+                <img
+                  src={formData.image}
+                  alt="Preview"
+                  className="w-32 h-32 object-cover rounded-md border"/>
+              </div>
+            )}
+          </div>
+        </div> {/* ✅ Correctly closed this div */}
+
+        {/* ✅ Submit button */}
         <button
-          onClick={handleAddOrUpdate}
-          className="mt-4 flex items-center bg-[${colors.brown}] text-white px-4 py-2 rounded hover:opacity-90"
-          style={{ backgroundColor: colors.brown }}
-        >
-          <PlusCircle className="w-5 h-5 mr-2" />
+          type="submit"
+          className="mt-6 flex items-center gap-2 bg-Brown text-Cream px-4 py-2 rounded-lg hover:bg-Redwood transition" >
+          <PlusCircle size={18} />
           {editingIndex !== null ? "Update Product" : "Add Product"}
         </button>
-      </div>
+      </form>
 
-      {/* Product Grid */}
-      {products.length === 0 ? (
-        <p className="text-gray-600">No products added yet.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {products.map((product, index) => (
+      {/* Product List */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {products.length === 0 ? (
+          <p className="text-Redwood">No products added yet.</p>
+        ) : (
+          products.map((product, index) => (
             <div
               key={index}
-              className="bg-white rounded-xl shadow-md p-4 flex flex-col"
-              style={{ border: `1px solid ${colors.darkCream}` }}
-            >
+              className="bg-yellow-50 p-4 rounded-2xl shadow-md flex flex-col justify-between">
               {product.image && (
                 <img
                   src={product.image}
                   alt={product.title}
-                  className="w-full h-40 object-cover rounded mb-3"
-                />
+                  className="w-full h-40 object-cover rounded-md mb-3"/>
               )}
-              <h3 className="text-lg font-bold text-[${colors.brown}]">{product.title}</h3>
-              <p className="text-sm text-gray-700 mb-1">{product.description}</p>
-              <p className="text-sm text-gray-500">Size: {product.size}</p>
-              <p className="text-sm text-gray-500 mb-2">Color: {product.color}</p>
+              <h2 className="text-xl font-semibold">{product.title}</h2>
+              <p className="text-sm text-Brown">{product.description}</p>
+              <p className="text-sm">
+                <strong>Size:</strong> {product.size || "—"}
+              </p>
+              <p className="text-sm">
+                <strong>Color:</strong> {product.color || "—"}
+              </p>
 
-              <div className="mt-auto flex gap-3">
+              <div className="flex justify-between mt-4">
                 <button
                   onClick={() => handleEdit(index)}
-                  className="flex items-center gap-1 text-blue-600 hover:text-blue-800"
-                >
-                  <Pencil className="w-4 h-4" /> Edit
+                  className="flex items-center gap-1 bg-Brown text-Beige px-3 py-1 rounded-md hover:bg-Redwood">
+                  <Pencil size={16} /> Edit
                 </button>
                 <button
                   onClick={() => handleDelete(index)}
-                  className="flex items-center gap-1 text-red-600 hover:text-red-800"
-                >
-                  <Trash2 className="w-4 h-4" /> Delete
+                  className="flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-400">
+                  <Trash size={16} /> Delete
                 </button>
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          ))
+        )}
+      </div>
     </div>
   );
 };
 
-export default Dashboard;
-
+export default ProductManager;

@@ -24,15 +24,17 @@ import UserDashboard from "./Pages/UserDashboard"*/
 
 function App(){
   const Location = useLocation();
-  const hideNavigation = Location.pathname ===  "/Signup" || Location.pathname ==="/Signin"
-  const hideNavbar = Location.pathname === "/Signup" || Location.pathname ==="/Signin"
+  const hideNavigation = Location.pathname ===  "/Signup" || Location.pathname ==="/Signin" || Location.pathname.startsWith("/admin");
 
   return (
    <>
-   <Navbar/>
-   <Navigation/>
-    {hideNavigation && <Navigation/>}
-    {hideNavbar && <Navbar/>}    
+
+    {/* {!hideNavigation && <Navigation/>} */}
+    {!hideNavigation && <Navbar/>}    
+    {!hideNavigation && <Navigation/>}
+
+    
+    
     <Routes>
       <Route path="/" element={<Landingpage/>}/>
      <Route path="/HomePage/Navbar" element={<Navbar/>}/>
@@ -40,10 +42,14 @@ function App(){
      <Route path="/Signin" element={<Signin/>}/> 
      <Route path="/Landingpage" element={<Landingpage/>}/>
      <Route path="*" element={<Pagenotfound/>}/>
-     <Route path="/admin" element={<AdminDashboard/>}/>
+     <Route path="/admin/*" element={<AdminDashboard/>}/>
     </Routes>
 
-    <Footer/>
+    {!hideNavigation &&     <Footer/>}
+
+
+
+    
     
 
     

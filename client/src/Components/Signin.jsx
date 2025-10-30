@@ -19,12 +19,14 @@ const Signin = () => {
 
         <div className="flex flex-col text-xl text-left gap-2">
           <span>Username</span>
-          <input type="text" placeholder='Enter your Name' className="rounded-md  p-1 border-2 outline-none focus:border-Brown focus:bg-slate-50"/>
+          <input type="text" placeholder='Enter your Name'
+           className="rounded-md  p-2 border-2 outline-none focus:border-Brown focus:bg-slate-50"/>
         </div>
 
         <div className="flex flex-col text-xl text-left gap-2">
           <span>Password</span>
-          <input type="password" placeholder='Enter your Password' className="rounded-md p-1 border-2 outline-none focus:border-Brown focus:bg-slate-50"/>
+          <input type="password" placeholder='Enter your Password'
+           className="rounded-md p-2 border-2 outline-none focus:border-Brown focus:bg-slate-50"/>
           
           <div className="flex gap-1 items-center">
             <input type="checkbox"/>
