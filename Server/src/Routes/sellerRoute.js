@@ -1,10 +1,23 @@
 const express = require('express');
 const router = express.Router();
-const { registerSeller, loginSeller, getSellerProfile } = require('../controllers/sellerController');
-const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 
+const {
+  registerSeller,
+  loginSeller,
+  sellerProfile
+} = require('../controllers/sellerAuthController');
+
+const { protect } = require('../middleware/authMiddleware');
+
+// Public
 router.post('/register', registerSeller);
 router.post('/login', loginSeller);
-router.get('/profile', protect, authorizeRoles('seller'), getSellerProfile);
+
+// Protected
+router.get('/profile', protect, sellerProfile);
 
 module.exports = router;
+
+
+
+

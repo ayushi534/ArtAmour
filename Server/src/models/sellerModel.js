@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const { Schema } = mongoose;
 
 const sellerSchema = new Schema({
@@ -6,7 +7,7 @@ const sellerSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  ownerName: {
+  name: {
     type: String,
     required: [true, "Name is required"],
     trim: true,
@@ -35,7 +36,6 @@ const sellerSchema = new Schema({
     required: [true, "phone number is required"],
     validate: {
       validator: function (value) {
-        // allows empty or 10-digit numbers
         return !value || /^[0-9]{10}$/.test(value);
       },
       message: "Phone number must be 10 digits",
@@ -48,12 +48,12 @@ const sellerSchema = new Schema({
 
   shopName: {
     type: String,
-    required: [true, " Shop name is required"],
+    required: [true, "Shop name is required"],
     trim: true,
-    minlength: [5, "Shop name must be at least 2 characters"],
+    minlength: [2, "Shop name must be at least 2 characters"],
   },
 
-  shopAdress: {
+  shopAddress: {
     type: String,
     trim: true,
     maxlength: [200, "Shop address cannot exceed 200 characters"],
@@ -62,23 +62,17 @@ const sellerSchema = new Schema({
   gstNumber: {
     type: String,
     unique: true,
-    sparse: true, // allows multiple nulls
+    required: false,
+    sparse: true,
     validate: {
       validator: function (value) {
         return (
           !value ||
-          /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(
-            value
-          )
+          /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/.test(value)
         );
       },
       message: "Invalid GST number format",
     },
-  },
-
-  profileImage: {
-    type: String,
-    default: "default-user.png",
   },
 
   isVerified: { type: Boolean, default: false },
@@ -99,19 +93,16 @@ const sellerSchema = new Schema({
   },
 });
 
+// FIXED HOOK
 sellerSchema.pre("save", function (next) {
-  if (this.shop_name && this.shop_name.length < 2) {
+  if (this.shopName && this.shopName.length < 2) {
     throw new Error("Shop name must have at least 2 characters");
   }
   next();
 });
 
-
-// Instance method to compare password
 sellerSchema.methods.matchPassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-
-const Seller = mongoose.model("Seller", sellerSchema);
-module.exports = Seller;
+module.exports = mongoose.model("Seller", sellerSchema);

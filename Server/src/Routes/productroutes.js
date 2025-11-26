@@ -1,16 +1,30 @@
 const express = require('express');
 const router = express.Router();
-const productController = require('../controllers/productController');
-const { protect, authorizeRoles } = require('../middleware/authMiddleware');
 
-router.get('/', productController.listProducts);
-router.get('/:id', productController.getProduct);
+const {
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  getMyProducts,
+  getAllProducts,
+  getProductById
+} = require('../controllers/productController');
 
-// seller-only
-router.post('/', protect, authorizeRoles('seller'), productController.createProduct);
-router.get('/seller/me', protect, authorizeRoles('seller'), productController.getSellerProducts);
-router.put('/:id', protect, authorizeRoles('seller'), productController.updateProduct);
-router.delete('/:id', protect, authorizeRoles('seller'), productController.deleteProduct);
+const { protect, isSeller } = require('../middleware/authMiddleware');
+
+// PUBLIC: list all products
+router.get('/', getAllProducts);
+
+// Put specific seller route BEFORE the ':id' param route
+router.get('/seller/me', protect, isSeller, getMyProducts);
+
+// SINGLE PRODUCT (by id) — keep param routes after specific ones
+router.get('/:id', getProductById);
+
+// SELLER-ONLY: create / update / delete
+router.post('/', protect, isSeller, createProduct);
+router.put('/:id', protect, isSeller, updateProduct);
+router.delete('/:id', protect, isSeller, deleteProduct);
 
 module.exports = router;
 

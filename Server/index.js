@@ -4,14 +4,15 @@ require('dotenv').config();
 const connectDB = require('./src/config/db');
 const cookieParser = require("cookie-parser");
 const errorhandler = require('./src/middleware/errorMiddleware');
-const cors = require('cors');
+const { protect, authorizeRoles} = require("./src/middleware/authMiddleware")
+//const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 5555;
 
 // routers
 const productRoute = require('./src/Routes/productroutes');
-const userRoute = require('./src/Routes/userroute');
+const userRoute = require('./src/Routes/userRoute');
 const sellerRoute = require('./src/Routes/sellerRoute');
 const authRoute = require('./src/Routes/authRoute');
 const ordersRoutes = require('./src/Routes/orderRoute');
@@ -20,11 +21,8 @@ const ordersRoutes = require('./src/Routes/orderRoute');
 app.use(express.json()); 
 app.use(cookieParser());
 
-const FRONTEND = process.env.FRONTEND_ORIGIN || 'http://localhost:5555yes';
-app.use(cors({
-  origin: FRONTEND,
-  credentials: true
-}));
+
+
 
 // database connect
 connectDB();
@@ -34,7 +32,7 @@ app.use('/api/products', productRoute);
 app.use('/api/auth', authRoute);           
 app.use('/api/orders', ordersRoutes);
 app.use('/api/user', userRoute);
-app.use('/api/sellers',sellerRoute);
+app.use('/api/seller',sellerRoute);
 
 
 // Basic 404

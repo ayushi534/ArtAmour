@@ -46,21 +46,10 @@ function App(){
     </Routes>
 
     {!hideNavigation &&     <Footer/>}
-
-
-
-    
-    
-
     
    </>
   );
 }
-  
-  
-
-
-
 export default App
 
 
