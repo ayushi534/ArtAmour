@@ -5,10 +5,21 @@ const connectDB = require('./src/config/db');
 const cookieParser = require("cookie-parser");
 const errorhandler = require('./src/middleware/errorMiddleware');
 const { protect, authorizeRoles} = require("./src/middleware/authMiddleware")
-//const cors = require('cors');
+const cors = require("cors");
+const helmet = require("helmet");
 
 const app = express();
 const PORT = process.env.PORT || 5555;
+
+const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN_VITE || "http://localhost:5173";
+app.use(helmet());
+app.use(
+  cors({
+    origin: FRONTEND_ORIGIN,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  })
+);
 
 // routers
 const productRoute = require('./src/Routes/productroutes');
