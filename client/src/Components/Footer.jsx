@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { Facebook, Instagram, Twitter, Youtube, Mail, MapPin, Phone } from "lucide-react";
 
 const Footer = () => {
@@ -25,7 +26,7 @@ const Footer = () => {
           <h2 className="text-xl font-semibold mb-4 text-Gold">Information</h2>
           <ul className="space-y-2 text-Beige">
             <li><a href="#" className="hover:text-Gold">About Us</a></li>
-            <li><a href="#" className="hover:text-Gold">Contact Us</a></li>
+            <li><Link to="/contact" className="hover:text-Gold">Contact Us</Link></li>
             <li><a href="#" className="hover:text-Gold">Terms of Use</a></li>
             <li><a href="#" className="hover:text-Gold">Privacy Policy</a></li>
             <li><a href="#" className="hover:text-Gold">Help</a></li>
@@ -49,8 +50,8 @@ const Footer = () => {
         <div>
           <h2 className="text-xl font-semibold mb-4 text-Gold">Artist</h2>
           <ul className="space-y-2 text-Beige">
-            <li><a href="#" className="hover:text-Gold">Become a Seller</a></li>
-            <li><a href="#" className="hover:text-Gold">Login to Your Account</a></li>
+            <li><Link to="/seller/login" className="hover:text-Gold">Become a Seller</Link></li>
+            <li><Link to="/signin" className="hover:text-Gold">Login to Your Account</Link></li>
           </ul>
         </div>
 

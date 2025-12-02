@@ -11,21 +11,22 @@ const Navbar = () => {
     <nav className="bg-Beige text-Brown shadow-lg py-4 px-8 flex justify-between items-center font-sans">
       {/* Left Section - Logo */}
       <div className="flex items-center gap-3">
-        <img
-          src="/assets/logo.png"
-          alt="ArtAmour Logo"
-          className="h-10 w-10 rounded-full border-2 border-Brown"
-        />
-        <h1 className="text-2xl font-bold tracking-wider text-Brown">ArtAmour</h1>
+        <Link to="/">
+          <img
+            src="/assets/logo.png"
+            alt="ArtAmour Logo"
+            className="h-10 w-10 rounded-full border-2 border-Brown"
+          />
+        </Link>
+        <Link to="/" className="text-2xl font-bold tracking-wider text-Brown">ArtAmour</Link>
       </div>
 
       {/* Center Section - Menu */}
       <div className="hidden md:flex gap-8 text-lg">
-        <Link to="/" href="#" className="hover:text-Redwood transition">Home</Link>
-        <a href="#" className="hover:text-Redwood transition">Dashboard</a>
-        <a href="#" className="hover:text-Redwood transition">Contact</a>
-        <Link to="/Signup" className="hover:text-Redwood transition">Signup</Link>
-        <Link to="/Signin" className="hover:text-Redwood transition">Signin</Link>
+        <Link to="/" className="hover:text-Redwood transition">Home</Link>
+        <Link to="/contact" className="hover:text-Redwood transition">Contact</Link>
+        <Link to="/signup" className="hover:text-Redwood transition">Signup</Link>
+        <Link to="/signin" className="hover:text-Redwood transition">Signin</Link>
       </div>
 
       {/* Right Section - Search + Icons */}
@@ -42,27 +43,31 @@ const Navbar = () => {
         </div>
 
         {/* Icons */}
-
-        <a href="#" className="hover:text-Redwood transition flex flex-col items-center">
+        {/* Seller icon goes to seller login (or dashboard if you add auth check) */}
+        <Link to="/seller/login" className="hover:text-Redwood transition flex flex-col items-center">
           <User className="h-6 w-6" />
-          <span className="text-xs">User</span>
-        </a>
-        <a href="#" className="hover:text-Redwood transition flex flex-col items-center">
+          <span className="text-xs">Seller</span>
+        </Link>
+
+        <Link to="orders" className="hover:text-Redwood transition flex flex-col items-center">
           <Package className="h-6 w-6" />
           <span className="text-xs">Orders</span>
-        </a>
-        <a href="#" className="hover:text-Redwood transition flex flex-col items-center">
+        </Link>
+
+        <Link to="/cart" className="hover:text-Redwood transition flex flex-col items-center">
           <ShoppingCart className="h-6 w-6" />
           <span className="text-xs">Cart</span>
-        </a>
-        <a href="#" className="hover:text-Redwood transition flex flex-col items-center">
+        </Link>
+
+        <Link to="/wishlist" className="hover:text-Redwood transition flex flex-col items-center">
           <Heart className="h-6 w-6" />
           <span className="text-xs">Wishlist</span>
-        </a>
-        <a href="#" className="hover:text-Redwood transition flex flex-col items-center">
+        </Link>
+
+        <Link to="/location" className="hover:text-Redwood transition flex flex-col items-center">
           <MapPin className="h-6 w-6" />
           <span className="text-xs">Location</span>
-        </a>
+        </Link>
 
         {/* Mobile Menu Button */}
         <div className="md:hidden relative">
@@ -71,20 +76,22 @@ const Navbar = () => {
           </button>
 
           {isOpen && (
-            <div className="absolute right-0 top-12 bg-yellow-50 shadow-lg rounded-lg p-4 flex flex-col gap-4 z-50">
+            <div className="absolute right-0 top-12 bg-yellow-50 shadow-lg rounded-lg p-4 flex flex-col gap-4 z-50 min-w-[160px]">
               <div className="flex items-center bg-Beige text-Brown rounded-full px-4 py-2">
                 <Search className="h-5 w-5 text-Brown" />
                 <input
                   type="text"
                   placeholder="Search..."
                   className="bg-transparent outline-none px-2 text-sm w-32"
-                />   
-            </div>
-              <Link to="/Signup" className="hover:text-Redwood transition">Signup</Link>
-              <Link to="/Signin" className="hover:text-Redwood transition">Signin</Link>
-              <Link to="/Landingpage" href="#" className="hover:text-Redwood transition">Home</Link>
-              <a href="#" className="hover:text-Redwood transition">Dashboard</a>
-              <a href="#" className="hover:text-Redwood transition">Contact</a>
+                />
+              </div>
+
+              <Link to="/" className="hover:text-Redwood transition">Home</Link>
+              <Link to="/contact" className="hover:text-Redwood transition">Contact</Link>
+              <Link to="/seller/signup" className="hover:text-Redwood transition">Seller Signup</Link>
+              <Link to="/seller/login" className="hover:text-Redwood transition">Seller Login</Link>
+              <Link to="/signup" className="hover:text-Redwood transition">Signup</Link>
+              <Link to="/signin" className="hover:text-Redwood transition">Signin</Link>
             </div>
           )}
         </div>
@@ -94,5 +101,6 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
 
 

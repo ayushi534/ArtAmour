@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.input-box {
+  @apply w-full px-4 py-2 rounded-lg border border-[#C6A664] bg-white text-[#4E342E]
+  focus:outline-none focus:ring-2 focus:ring-[#C9A14A] shadow-sm;
+}
+
+.label {
+  @apply block text-sm font-semibold text-[#4E342E] mb-1;
+}
+
+.form-group {
+  @apply flex flex-col;
+}
