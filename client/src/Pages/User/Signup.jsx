@@ -2,8 +2,9 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Images from "../../assets/data";
-import API from "../../utils/api";
 import { AuthContext } from "../../context/authContext";
+import { userRegister } from "../../Api/userApi";
+
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -39,10 +40,11 @@ const Signup = () => {
         phone: form.phone
       };
 
-      const res = await API.post("/user/register", payload); // <- changed to /api/user/register
-      if (res.data?.token) localStorage.setItem("token", res.data.token);
-      await loadUser();
-      navigate("/");
+     const res = await userRegister(payload);
+     if (res.data?.token) {localStorage.setItem("token", res.data.token);}
+     await loadUser();
+     navigate("/");
+
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.message || "Registration failed");

@@ -40,7 +40,8 @@ export default function SellerProducts() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">My Products</h1>
-        <Link to="/seller/products/new" className="px-4 py-2 bg-[#4E342E] text-white rounded">
+        <Link to="/seller/products/new"
+         className="px-4 py-2 bg-[#4E342E] text-white rounded">
           + Add Product
         </Link>
       </div>
@@ -59,8 +60,16 @@ export default function SellerProducts() {
               <div className="flex items-center justify-between mt-3">
                 <div className="font-bold">₹ {p.price}</div>
                 <div className="flex gap-2">
-                  <button onClick={() => navigate(`/seller/products/edit/${p._id}`)} className="px-3 py-1 bg-blue-500 text-white rounded">Edit</button>
-                  <button onClick={() => handleDelete(p._id)} className="px-3 py-1 bg-red-500 text-white rounded">Delete</button>
+                  <button 
+                    onClick={() => 
+                    navigate(`/seller/products/edit/${p._id}`)} 
+                    className="px-3 py-1 bg-blue-500 text-white rounded">Edit
+                  </button>
+                  <button
+                   Click={() => 
+                    handleDelete(p._id)} 
+                    className="px-3 py-1 bg-red-500 text-white rounded">Delete
+                  </button>
                 </div>
               </div>
             </div>

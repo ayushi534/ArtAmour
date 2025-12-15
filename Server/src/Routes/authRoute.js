@@ -12,5 +12,13 @@ router.post("/logout", logout);
 
 // Protected
 router.get("/profile", protect, profile);
+router.get("/me", protect, (req, res) => {
+  res.json({
+    loggedIn: true,
+    role: req.role,
+    user: req.user
+  });
+});
+
 
 module.exports = router;

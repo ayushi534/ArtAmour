@@ -1,16 +1,16 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "http://localhost:5555", // backend base
-  timeout: 15000,
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5555/api", 
+  withCredentials: true,
 });
 
-// attach token automatically
+// optional: attach token if you store under 'adminToken' or 'token'
 API.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token"); // make sure login saves this key
+  // prefer adminToken if admin endpoints use it
+  const token = localStorage.getItem("adminToken") || localStorage.getItem("token") || sessionStorage.getItem("adminToken");
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
 export default API;
-

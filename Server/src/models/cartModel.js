@@ -9,6 +9,12 @@ const cartSchema = new Schema({
     index: true,
     default: null
   },
+
+  items: [{
+    product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+    quantity: { type: Number, default: 1 }
+  }],
+
   sessionId: {
     type: String,   
     default: null

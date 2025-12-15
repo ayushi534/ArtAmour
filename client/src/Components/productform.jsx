@@ -1,164 +1,189 @@
 // src/Components/ProductForm.jsx
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import ProductCategoryPicker from "./productCategoryPicker";
 
-export default function ProductForm({
-  initialValues = null,
-  onSubmit,
-  loading = false,
-}) {
+export default function ProductForm({ onSubmit, loading = false, initial = {} }) {
+
   const [form, setForm] = useState({
-    name: "",
-    description: "",
-    price: "",
-    mrp: "",
-    category: "",
-    image: "",
-    quantity: 1,
+    name: initial.name || "",
+    price: initial.price || "",
+    description: initial.description || "",
+    stock: initial.stock || 0,
+    category: initial.category || "",
+    subcategory: initial.subcategory || "",
   });
 
-  const [error, setError] = useState(null);
+  // 🔹 Images state
+  const [images, setImages] = useState([]);
+  const [previews, setPreviews] = useState([]);
+
+  const lastInitialRef = useRef(JSON.stringify(form));
 
   useEffect(() => {
-    if (initialValues) {
-      setForm({
-        name: initialValues.name || "",
-        description: initialValues.description || "",
-        price: initialValues.price ?? "",
-        mrp: initialValues.mrp ?? "",
-        // if initialValues.category is an object, try to normalize to id string
-        category:
-          initialValues.category && typeof initialValues.category === "object"
-            ? initialValues.category._id || ""
-            : initialValues.category ?? "",
-        image: initialValues.image ?? "",
-        quantity: initialValues.quantity ?? 1,
-      });
+    const snapshot = JSON.stringify({
+      name: initial.name || "",
+      price: initial.price || "",
+      description: initial.description || "",
+      stock: initial.stock || 0,
+      category: initial.category || "",
+      subcategory: initial.subcategory || "",
+    });
+
+    if (snapshot !== lastInitialRef.current) {
+      lastInitialRef.current = snapshot;
+      setForm(JSON.parse(snapshot));
     }
-  }, [initialValues]);
+  }, [initial]);
 
   function handleChange(e) {
     const { name, value } = e.target;
-    setForm((s) => ({ ...s, [name]: value }));
-    setError(null);
+    setForm((p) => ({ ...p, [name]: value }));
   }
 
-  // helper: check 24-char hex ObjectId
-  const isValidObjectId = (id) => /^[0-9a-fA-F]{24}$/.test(String(id));
+  function handleCategoryChange({ category, subcategory }) {
+    setForm((p) => {
+      if (p.category === category && p.subcategory === subcategory) return p;
+      return { ...p, category: category || "", subcategory: subcategory || "" };
+    });
+  }
 
-  async function submit(e) {
+  // 🔹 Image selection handler
+  function handleImageChange(e) {
+    const files = Array.from(e.target.files);
+    setImages(files);
+
+    // preview urls
+    const previewUrls = files.map(file => URL.createObjectURL(file));
+    setPreviews(previewUrls);
+  }
+
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    // Basic client-side validation
-    if (!form.name?.trim()) {
-      setError("Product name is required.");
-      return;
-    }
-    if (form.price === "" || isNaN(Number(form.price))) {
-      setError("Please enter a valid price.");
-      return;
-    }
-    if (form.category && !isValidObjectId(form.category)) {
-      setError("Category must be a valid id (24 hex characters) or left empty.");
-      return;
+    if (!form.name.trim()) return alert("Please enter product name");
+    if (!form.category) return alert("Please select a category");
+
+    // 🔹 IMPORTANT: FormData for Multer
+    const formData = new FormData();
+
+    formData.append("name", form.name.trim());
+    formData.append("price", Number(form.price || 0));
+    formData.append("description", form.description || "");
+    formData.append("stock", Number(form.stock || 0));
+    formData.append("category", form.category);
+    if (form.subcategory) {
+      formData.append("subcategory", form.subcategory);
     }
 
-    const payload = {
-      ...form,
-      price: form.price === "" ? undefined : Number(form.price),
-      mrp: form.mrp === "" ? undefined : Number(form.mrp),
-      quantity: form.quantity === "" ? 1 : Number(form.quantity),
-      // send category undefined if empty string so backend won't try to cast it
-      category: form.category === "" ? undefined : form.category,
-    };
+    images.forEach((img) => {
+      formData.append("images", img);
+    });
 
-    // call parent onSubmit and pass payload
-    onSubmit(payload);
+    await onSubmit(formData);
   }
 
   return (
-    <form onSubmit={submit} className="space-y-3 p-4 bg-white rounded shadow">
-      {error && (
-        <div className="p-2 bg-red-100 text-red-700 rounded">{error}</div>
-      )}
+    <form onSubmit={handleSubmit} className="space-y-4">
 
-      <input
-        name="name"
-        value={form.name}
-        onChange={handleChange}
-        placeholder="Product name"
-        className="input"
-        required
-      />
-
-      <textarea
-        name="description"
-        value={form.description}
-        onChange={handleChange}
-        placeholder="Description"
-        className="input"
-      />
-
-      <div className="grid grid-cols-2 gap-3">
+      {/* Product Name */}
+      <div>
+        <label className="block mb-1">Name</label>
         <input
-          name="price"
-          value={form.price}
+          name="name"
+          value={form.name}
           onChange={handleChange}
-          placeholder="Price"
-          className="input"
+          className="w-full border rounded px-2 py-1"
           required
-        />
-        <input
-          name="mrp"
-          value={form.mrp}
-          onChange={handleChange}
-          placeholder="MRP (optional)"
-          className="input"
         />
       </div>
 
-      <input
-        name="category"
-        value={form.category}
-        onChange={handleChange}
-        placeholder="Category id (optional — 24 hex chars)"
-        className="input"
-      />
+      {/* Price */}
+      <div>
+        <label className="block mb-1">Price</label>
+        <input
+          name="price"
+          type="number"
+          value={form.price}
+          onChange={handleChange}
+          className="w-full border rounded px-2 py-1"
+          required
+        />
+      </div>
 
-      <input
-        name="image"
-        value={form.image}
-        onChange={handleChange}
-        placeholder="Image URL (optional)"
-        className="input"
-      />
+      {/* Stock */}
+      <div>
+        <label className="block mb-1">Stock</label>
+        <input
+          name="stock"
+          type="number"
+          value={form.stock}
+          onChange={handleChange}
+          className="w-full border rounded px-2 py-1"
+        />
+      </div>
 
-      <input
-        name="quantity"
-        value={form.quantity}
-        onChange={handleChange}
-        placeholder="Quantity"
-        className="input"
-        type="number"
-        min="1"
-      />
+      {/* Category Picker */}
+      <div>
+        <label className="block mb-1">Category</label>
+        <ProductCategoryPicker
+          value={{ category: form.category, subcategory: form.subcategory }}
+          onChange={handleCategoryChange}
+        />
+      </div>
 
-      <div className="flex gap-3">
+      {/* Description */}
+      <div>
+        <label className="block mb-1">Description</label>
+        <textarea
+          name="description"
+          value={form.description}
+          onChange={handleChange}
+          className="w-full border rounded px-2 py-1"
+        />
+      </div>
+
+      {/* 🔥 IMAGE UPLOAD SECTION */}
+      <div>
+        <label className="block mb-1">Product Images</label>
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleImageChange}
+        />
+
+        {/* Preview */}
+        {previews.length > 0 && (
+          <div className="flex gap-3 mt-2 flex-wrap">
+            {previews.map((src, i) => (
+              <img
+                key={i}
+                src={src}
+                alt="preview"
+                className="w-20 h-20 object-cover rounded border"
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Submit */}
+      <div>
         <button
+          type="submit"
           disabled={loading}
-          className="px-4 py-2 bg-[#4E342E] text-white rounded"
+          className="px-4 py-2 rounded bg-blue-600 text-white disabled:opacity-60"
         >
           {loading ? "Saving..." : "Save Product"}
         </button>
-
-        <button
-          type="button"
-          onClick={() => window.history.back()}
-          className="px-4 py-2 border rounded"
-        >
-          Cancel
-        </button>
       </div>
+
     </form>
   );
 }
+
+
+
+
+
 

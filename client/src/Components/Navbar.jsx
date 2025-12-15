@@ -92,6 +92,8 @@ const Navbar = () => {
               <Link to="/seller/login" className="hover:text-Redwood transition">Seller Login</Link>
               <Link to="/signup" className="hover:text-Redwood transition">Signup</Link>
               <Link to="/signin" className="hover:text-Redwood transition">Signin</Link>
+              {/* Admin link (visible to anyone who has credentials) */}
+              <Link to="/admin/login" className="text-sm font-semibold">Admin</Link>
             </div>
           )}
         </div>

@@ -2,7 +2,7 @@
 import React, { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Images from "../../assets/data";
-import API from "../../utils/api";
+import { userLogin } from "../../Api/userApi";
 import { AuthContext } from "../../context/authContext";
 
 const Signin = () => {
@@ -20,10 +20,13 @@ const Signin = () => {
     setError(null);
     setLoading(true);
     try {
-      const res = await API.post("/user/login", form); // <- changed to /api/user/login
-      if (res.data?.token) localStorage.setItem("token", res.data.token);
+      const res = await userLogin(form);
+      if (res.data?.token) {
+        localStorage.setItem("token", res.data.token)
+      }
       await loadUser();
       navigate("/");
+
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.message || "Login failed");

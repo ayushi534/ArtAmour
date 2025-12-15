@@ -1,7 +1,8 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import API from "../../utils/api";
+import { sellerSignup } from "../../Api/sellerApi";
+
 
 // IMPORT IMAGE DIRECTLY
 import AuthBg from "../../assets/data";
@@ -14,9 +15,10 @@ const SellerSignup = () => {
     const payload = Object.fromEntries(new FormData(e.target).entries());
 
     try {
-      await API.post("/seller/signup", payload);
+      await sellerSignup(payload);
       alert("Seller account created successfully!");
       navigate("/seller/login");
+
     } catch (error) {
       console.log(error);
       alert(error?.response?.data?.message || "Signup failed");

@@ -10,17 +10,21 @@ export const AuthProvider = ({ children }) => {
 
   const loadUser = async () => {
   try {
-    const token = localStorage.getItem("token");
-    if (token) {
-      // explicitly add Authorization when fetching profile
-      const res = await API.get("/api/user/profile", {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+    const userToken = localStorage.getItem("token");
+    const sellerToken = localStorage.getItem("sellerToken");
+
+    // ❌ do NOT call user profile for seller
+    if (sellerToken) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
+    if (userToken) {
+      const res = await API.get("/user/profile");
       setUser(res.data.user || null);
     } else {
-      // try cookie-based fallback
-      const res = await API.get("/api/user/profile");
-      setUser(res.data.user || null);
+      setUser(null);
     }
   } catch (err) {
     setUser(null);
@@ -28,6 +32,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }
 };
+
   useEffect(() => {
     loadUser();
     // eslint-disable-next-line
@@ -35,7 +40,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await API.post("/api/user/logout"); // optional: create this route on backend (you already have logout logic in controller)
+      await API.post("user/logout"); // optional: create this route on backend (you already have logout logic in controller)
     } catch (err) {
       // ignore
     } finally {

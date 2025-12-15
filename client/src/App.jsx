@@ -5,6 +5,7 @@ import Navbar from "./Components/Navbar";
 import Navigation from "./Components/Navigation";
 import Footer from "./Components/Footer";
 import Landingpage from "./Components/Landingpage";
+import ProductsCategory from "./Pages/productsCategory";
 import Pagenotfound from "./Pages/Pagenotfound";
 
 // Auth / user pages
@@ -17,13 +18,18 @@ import SellerSignup from "./Pages/Seller/sellerSignup";
 import SellerDashboardLayout from "./Pages/Seller/SellerDashboardLayout"; 
 import SellerDashboard from "./Pages/Seller/sellerDashboard"; 
 import SellerProducts from "./Pages/Seller/sellerProducts"; 
-import AddProduct from "./pages/seller/AddProduct"; 
+import AddProduct from "./Pages/Seller/addProduct"; 
 import EditProduct from "./Pages/Seller/editProduct"; 
 
 // Admin
-import AdminDashboard from "./Admin/Dashboard/AdminDashboard";
-import ProductManager from "./Admin/Dashboard/ProductManager";
+import AdminDashboard from "./Pages/Admin/AdminDashboard";
+import AdminRegister from "./Pages/Admin/adminRegister"
+import AdminLogin from './Pages/Admin/adminLogin';
+import ProductManager from "./Pages/Admin/ProductManager";
+import ProtectedRoute from './Components/protectedRoute';
 
+//products
+import ProductsPage from "./Pages/Product/productPage"; 
 // Other components/pages
 
 import ContactPage from "./Components/contact"; 
@@ -67,9 +73,18 @@ export default function App() {
           {/* add other seller routes here (orders, profile, etc) */}
         </Route>
 
+        {/*product category*/}
+        {/*<Route path="/products" element={<ProductsCategory />} />*/}
+        <Route path="/category/:slug" element={<ProductsCategory />} />
+        <Route path="/products" element={<ProductsPage />} /> 
+        
         {/* Admin area */}
-        <Route path="/admin/*" element={<AdminDashboard />} />
-
+        <Route element={<ProtectedRoute />}>
+          <Route path="/admin/*" element={<AdminDashboard />} />
+          <Route path="/admin/register" element={<AdminRegister />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+        </Route>
+      
         {/* Admin product manager (if separate route) */}
         <Route path="/admin/products" element={<ProductManager />} />
 

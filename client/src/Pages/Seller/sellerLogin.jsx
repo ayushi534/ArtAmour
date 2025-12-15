@@ -1,7 +1,8 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import API from "../../utils/api";
+import { sellerLogin } from "../../Api/sellerApi";
+
 
 const SellerLogin = () => {
   const navigate = useNavigate();
@@ -12,25 +13,16 @@ const SellerLogin = () => {
     const payload = Object.fromEntries(form.entries());
 
     try {
-      
-      const res = await API.post("/seller/login", payload);
-
-      // server should return token in res.data.token (confirm with console)
+      const res = await sellerLogin(payload);
       const token = res?.data?.token;
       if (!token) {
-        console.error("No token in login response:", res.data);
-        alert("Login succeeded but token missing in response.");
+        alert("Token missing");
         return;
       }
-
-      // Save token under both keys so other parts of app/legacy code work
-      localStorage.setItem("token", token);
       localStorage.setItem("sellerToken", token);
-
-      alert("Login successful!");
       navigate("/seller/dashboard");
+
     } catch (err) {
-    
       // try to show helpful message
       const message = err?.response?.data?.message || err?.message || "Login failed";
       alert(message);

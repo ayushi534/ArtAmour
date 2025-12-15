@@ -1,23 +1,39 @@
-// src/utils/api.js
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000",
-  timeout: 15000,
-  withCredentials: false,
+  baseURL: "http://localhost:5555/api",
+  withCredentials: true,
 });
 
 API.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token") || localStorage.getItem("sellerToken");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  const url = config.url || "";
+
+  let token = null;
+
+  // USER APIs
+  if (url.startsWith("/user")) {
+    token = localStorage.getItem("token");
+  }
+
+  // SELLER APIs
+  else if (url.startsWith("/products") || url.startsWith("/seller")) {
+    token = localStorage.getItem("sellerToken");
+  }
+
+  // ADMIN APIs
+  else if (url.startsWith("/admin")) {
+    token = localStorage.getItem("adminToken");
+  }
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
   return config;
 });
 
-API.interceptors.response.use(
-  (res) => res,
-  (err) => Promise.reject(err?.response?.data || err)
-);
-
 export default API;
+
+
 
 

@@ -1,14 +1,70 @@
 const asyncHandler = require('express-async-handler');
 const Product = require('../models/productModel');
+const Category = require('../models/categoryModels')
+
 
 const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find();
-    res.json({ success:true, count: products.length, products });
+    const {
+      category,
+      subcategory,
+      minPrice,
+      maxPrice,
+      color,
+      categorySlug
+    } = req.query;
+
+    let filter = {
+      status: "active" 
+    };
+
+    // 🔹 Category by ID
+    if (category) {
+      filter.category = category;
+    }
+
+    // 🔹 Category by SLUG (frontend friendly)
+    if (categorySlug) {
+      const cat = await Category.findOne({ slug: categorySlug });
+      if (cat) filter.category = cat._id;
+    }
+
+    // 🔹 Subcategory (categoryItem)
+    if (subcategory) {
+      filter.subcategory = subcategory;
+    }
+
+    // 🔹 Color filter (if field exists)
+    if (color) {
+      filter.color = color;
+    }
+
+    // 🔹 Price filter
+    if (minPrice || maxPrice) {
+      filter.price = {
+        ...(minPrice && { $gte: Number(minPrice) }),
+        ...(maxPrice && { $lte: Number(maxPrice) }),
+      };
+    }
+
+    const products = await Product.find(filter)
+      .populate("category", "name slug")
+      .populate("subcategory", "name");
+
+    res.json({
+      success: true,
+      count: products.length,
+      products,
+    });
+
   } catch (err) {
-    res.status(500).json({ success:false, message: err.message });
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
   }
 };
+
 
 const getProductById = async (req, res) => {
   try {
@@ -21,25 +77,82 @@ const getProductById = async (req, res) => {
 };
 
 const createProduct = asyncHandler(async (req, res) => {
-  // req.seller should be present because isSeller middleware sets it
-  if (!req.seller || !req.seller._id) return res.status(401).json({ success:false, message:'Not authenticated as seller' });
+  if (!req.seller || !req.seller._id) {
+    return res.status(401).json({
+      success: false,
+      message: "seller authenticated required"
+    });
+  }
 
-  const { name, description, price, mrp, category, image, quantity } = req.body;
-  if (!name || price == null) return res.status(400).json({ success:false, message:'name and price required' });
+  const {
+    name,
+    description,
+    price,
+    mrp,
+    category,
+    subcategory,
+    stock,
+    color
+  } = req.body;
 
+  if (!name || price == null || !category) {
+    return res.status(400).json({
+      success: false,
+      message: "name, price and category are required"
+    });
+  }
+
+   // ✅ Images from Multer
+  const images = req.files
+    ? req.files.map(file => `/uploads/products/${file.filename}`)
+    : [];
+
+  // 1️⃣ Validate main category
+  const parentCategory = await Category.findById(category);
+  if (!parentCategory) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid category"
+    });
+  }
+
+  // 2️⃣ Validate subcategory (if provided)
+  if (subcategory) {
+    const childCategory = await Category.findById(subcategory);
+     if (
+      !childCategory.parent ||
+      childCategory.parent.toString() !== category.toString()
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid subcategory"
+      });
+    }
+  }
+
+  // 3️⃣ Create Product (this IS the category item)
   const product = await Product.create({
     seller: req.seller._id,
     name,
     description,
     price: Number(price),
-    mrp: mrp != null ? Number(mrp) : undefined,
+    mrp: mrp ? Number(mrp) : undefined,
     category,
-    image,
-    quantity: quantity != null ? Number(quantity) : 1
+    subcategory: subcategory || null,
+    images,
+    stock: stock ? Number(stock) : 1,
+    color,
+    status: "active" 
   });
 
-  res.status(201).json({ success:true, message:'Product created', product });
+  res.status(201).json({
+    success: true,
+    message: "Product created and submitted for review",
+    product
+  });
 });
+
+
 
 const getMyProducts = async (req, res) => {
   try {
@@ -80,7 +193,22 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-module.exports ={ getAllProducts, getProductById, createProduct, getMyProducts ,updateProduct, deleteProduct}
+// controllers/productController.js
+const getProductsByCategory = async (req, res) => {
+  const { categoryId } = req.params;
+
+  const products = await Product.find({
+    category: categoryId,
+    status: "active",
+  })
+  .populate("subcategory", "name");
+
+  res.status(200).json(products);
+};
+
+
+
+module.exports ={ getAllProducts, getProductById, createProduct, getMyProducts ,updateProduct, deleteProduct, getProductsByCategory}
 
 
 

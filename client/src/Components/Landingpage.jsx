@@ -1,14 +1,8 @@
 import React from "react";
 import Image from "../assets/data";
-import Cards from "./cards";
+import Categorycards from "./categoryCards";
 
 
-const ProductsCards = [
-  { id: 1, title: "Art", image: Image.ArtImg },
-  { id: 2, title: "Pottery", image: Image.pottery },
-  { id: 3, title: "Paintings", image: Image.PaintingImg },
-  { id: 4, title: "Candles", image: Image.candleImg },
-];
 
 const Landingpage = () => {
   return (
@@ -47,11 +41,10 @@ const Landingpage = () => {
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-center text-Brown mb-12">
           Explore Artworks
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-          {ProductsCards.map((item) => (
-            <Cards key={item.id} item={item} />
-          ))}
+        <div className="max-w-7xl mx-auto">
+          <Categorycards />
         </div>
+
       </section>
     </div>
   );

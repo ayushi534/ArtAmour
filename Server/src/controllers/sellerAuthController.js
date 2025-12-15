@@ -44,14 +44,14 @@ const registerSeller = async (req, res, next) => {
     });
 
     // Create JWT and set cookie (optional but recommended)
-    const token = signToken({ id: newRetailer._id.toString(), type: "seller" });
+    const token = signToken({ id: Seller._id.toString(), role: "seller" });
     setTokenCookie(res, token);
 
     // Send sanitized seller
     res.status(201).json({
       message: "Seller registered successfully",
       token,
-      seller: sanitizeSeller(newRetailer),
+      seller: sanitizeSeller(Seller),
     });
   } catch (err) {
     next(err);
@@ -71,7 +71,7 @@ const loginSeller = async (req, res, next) => {
     if (!isMatch) return res.status(401).json({ message: "Incorrect password" });
 
     // Create JWT
-    const token = signToken({ id: seller._id.toString(), type: "seller" });
+    const token = signToken({ id: seller._id.toString(), role: "seller" });
     setTokenCookie(res, token);
 
     res.json({
