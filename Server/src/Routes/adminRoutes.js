@@ -8,7 +8,8 @@ const {
   me,
   logout,
   approveProduct,
-  rejectProduct
+  rejectProduct,
+  dashboardStats
 } = require('../controllers/adminController');
 
 // NOTE: correct folder name is "middlewares" (plural)
@@ -23,6 +24,8 @@ router.get('/me', me);
 // protect -> ensure token valid, then isAdmin -> ensure admin role
 router.put("/approve/:id", protect, isAdmin, approveProduct);
 router.put("/reject/:id", protect, isAdmin, rejectProduct);
+router.get("/dashboard-stats", protect, isAdmin, dashboardStats);
+
 
 module.exports = router;
 

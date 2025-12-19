@@ -2,14 +2,7 @@
 import React from "react";
 export default function ProductCard({ product }) {
   return (
-//     <div className="border rounded shadow-sm p-4">
-//       <img src={product.images?.[0] || "/images/placeholder.jpg"} alt={product.name} className="w-full h-48 object-cover mb-3 rounded" />
-//       <h3 className="font-semibold">{product.name}</h3>
-//       <p className="text-sm text-gray-600">₹{product.price}</p>
-//       <button className="mt-2 px-3 py-1 bg-Brown text-Beige rounded">View</button>
-//     </div>
-//   );
-// }
+
 <div className="bg-[#ffebd6] p-4 rounded-xl shadow-md">
   <img src={product.images[0]} className="h-48 w-full rounded-lg"/>
 

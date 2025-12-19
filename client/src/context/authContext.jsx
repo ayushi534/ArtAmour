@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
     const userToken = localStorage.getItem("token");
     const sellerToken = localStorage.getItem("sellerToken");
 
-    // ❌ do NOT call user profile for seller
+   
     if (sellerToken) {
       setUser(null);
       setLoading(false);
@@ -35,14 +35,14 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     loadUser();
-    // eslint-disable-next-line
+   
   }, []);
 
   const logout = async () => {
     try {
-      await API.post("user/logout"); // optional: create this route on backend (you already have logout logic in controller)
+      await API.post("user/logout"); 
     } catch (err) {
-      // ignore
+     
     } finally {
       localStorage.removeItem("token");
       setUser(null);

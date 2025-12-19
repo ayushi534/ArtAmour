@@ -1,6 +1,6 @@
 // src/Components/ProductCategoryPicker.jsx
 import React, { useEffect, useState, useRef } from "react";
-import useCategories from "../hooks/useCategories";
+import useCategories from "../../hooks/useCategories";
 
 export default function ProductCategoryPicker({ value = {}, onChange }) {
   const { categories, loading } = useCategories();

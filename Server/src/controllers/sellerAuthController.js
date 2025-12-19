@@ -34,17 +34,21 @@ const registerSeller = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create seller (include shopName and shopAddress correctly)
-    const newRetailer = await Seller.create({
+    const newSeller= await Seller.create({
       name,
       shopName,
       email,
       phone,
       password: hashedPassword,
       shopAddress,
+      role: "seller",
     });
 
     // Create JWT and set cookie (optional but recommended)
-    const token = signToken({ id: Seller._id.toString(), role: "seller" });
+    const token = signToken({ 
+      id: newSeller._id.toString(), 
+      role: "seller" 
+    });
     setTokenCookie(res, token);
 
     // Send sanitized seller
@@ -88,7 +92,7 @@ const sellerProfile = async (req, res) => {
   // assuming protect middleware sets req.user to seller doc
   res.json({
     message: "Seller profile loaded",
-    seller: req.user ? sanitizeSeller(req.user) : null,
+    seller: req.seller ? sanitizeSeller(req.seller) : null,
   });
 };
 

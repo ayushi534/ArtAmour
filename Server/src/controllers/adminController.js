@@ -1,6 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const Admin = require("../models/adminModel");
-const Product = require("../models/productModel"); // ADDED: required Product model
+const Product = require("../models/productModel"); 
+const Seller = require("../models/sellerModel");
+const User = require("../models/userModel");
 const { signToken, setTokenCookie} = require("../utils/jwt");
 
 // Register (creates admin and returns token + admin info)
@@ -18,7 +20,7 @@ const register = asyncHandler(async (req, res) => {
   const token = signToken({
     id: admin._id,
     email: admin.email,
-    role: admin.role,
+    role: "admin",
   });
   setTokenCookie(res, token);
 
@@ -31,7 +33,7 @@ const register = asyncHandler(async (req, res) => {
       id: admin._id,
       name: admin.name,
       email: admin.email,
-      role: admin.role,
+      role: "admin",
     },
   });
 });
@@ -47,8 +49,8 @@ const login = asyncHandler(async (req, res) => {
 
   const token = signToken({
     id: admin._id,
-    role: "admin",     
-    type: "admin"
+    role: "admin"     
+   
   });
 
   setTokenCookie(res, token);
@@ -126,4 +128,18 @@ const rejectProduct = async (req, res) => {
   }
 };
 
-module.exports = { login, register, me, logout, approveProduct, rejectProduct };
+// controllers/adminController.js
+const dashboardStats = async (req, res) => {
+  const totalProducts = await Product.countDocuments();
+  const activeSellers = await Seller.countDocuments({ status: "approved" });
+  const users = await User.countDocuments();
+
+  res.json({
+    totalProducts,
+    activeSellers,
+    users,
+  });
+};
+
+
+module.exports = { login, register, me, logout, approveProduct, rejectProduct , dashboardStats };

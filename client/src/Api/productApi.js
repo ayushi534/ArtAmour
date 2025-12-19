@@ -9,7 +9,7 @@ export const createProduct = (payload) =>
 
 // ✅ FETCH LOGGED-IN SELLER PRODUCTS
 export const fetchMyProducts = async () => {
-  const res = await API.get("/products/seller/me");
+  const res = await API.get("/seller/products/me");
   return res.data;
 };
 

@@ -1,212 +1,124 @@
-import React, { useState } from "react";
-import { PlusCircle, Pencil, Trash } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import API from "../../utils/api";
+import {
+  CheckCircle,
+  XCircle,
+  Clock,
+  Store,
+  IndianRupee
+} from "lucide-react";
 
-const ProductManager = () => {
+export default function ProductManager() {
   const [products, setProducts] = useState([]);
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    size: "",
-    color: "",
-    image: "",
-  });
-  const [editingIndex, setEditingIndex] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Handle input change
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  useEffect(() => {
+    fetchSellerProducts();
+  }, []);
 
-  // Handle image upload
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setFormData({ ...formData, image: imageUrl });
+  const fetchSellerProducts = async () => {
+    try {
+      const res = await API.get("/admin/seller-products");
+      setProducts(res.data.sellerproducts || []);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to load seller products");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Add or Update product
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    
-    if (editingIndex !== null) {
-      const updatedProducts = [...products];
-      updatedProducts[editingIndex] = formData;
-      setProducts(updatedProducts);
-      setEditingIndex(null);
-    } else {
-      setProducts([...products, formData]);
-    }
-
-    // Reset form
-    setFormData({
-      title: "",
-      description: "",
-      size: "",
-      color: "",
-      image: "",
-    });
+  const approveProduct = async (id) => {
+    await API.put(`/admin/seller-products/${id}/approve`);
+    fetchSellerProducts();
   };
 
-  // Edit product
-  const handleEdit = (index) => {
-    setFormData(products[index]);
-    setEditingIndex(index);
+  const rejectProduct = async (id) => {
+    await API.put(`/admin/seller-products/${id}/reject`);
+    fetchSellerProducts();
   };
 
-  // Delete product
-  const handleDelete = (index) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
-      setProducts(products.filter((_, i) => i !== index));
-    }
-  };
+  if (loading) {
+    return <p className="text-center mt-20">Loading products...</p>;
+  }
 
   return (
-    <div className="p-8 bg-Cream min-h-screen text-Brown">
-      <h1 className="text-3xl font-bold mb-6">Product Management</h1>
+    <div className="p-10 bg-[#ffebd6] min-h-screen">
+      <h1 className="text-3xl font-bold text-[#4E342E] mb-8">
+        Product Manager
+      </h1>
 
-      {/* Product Form */}
-      <form
-        onSubmit={handleSubmit}
-        className="bg-yellow-50 p-6 rounded-2xl shadow-md mb-8">
-       
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleChange}
-            placeholder="Product Title"
-            className="border p-2 rounded-md w-full"
-            required
-          />
+      <div className="grid gap-6">
+        {products.map((p) => (
+          <div
+            key={p._id}
+            className="bg-white border border-[#C6A664] rounded-xl p-6 shadow"
+          >
+            <div className="flex justify-between items-start">
+              <div className="space-y-2">
+                <h2 className="text-xl font-semibold text-[#4E342E]">
+                  {p.product?.name}
+                </h2>
 
-          <input
-            type="text"
-            name="size"
-            value={formData.size}
-            onChange={handleChange}
-            placeholder="Size (e.g. inch, cm )"
-            className="border p-2 rounded-md w-full"
-          />
+                <p className="text-sm text-gray-600">
+                  Seller: <b>{p.seller?.shopName}</b>
 
-          <input
-            type="text"
-            name="color"
-            value={formData.color}
-            onChange={handleChange}
-            placeholder="Color Selection (e.g. Red, Blue)"
-            className="border p-2 rounded-md w-full"
-          />
+                </p>
 
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            placeholder="Product Description"
-            className="border p-2 rounded-md w-full "
-            rows="3"
-            required>
-            </textarea>
+                <p className="flex items-center gap-1 text-[#b84300]">
+                  <IndianRupee size={16} /> {p.price}
+                </p>
 
-          {/* ✅ Image Upload Section */}
-          <div className="md:col-span-2">
-            <label className="block text-sm font-medium mb-2">
-              Product Image
-            </label>
+                <p className="text-sm">
+                  Stock: <b>{p.stock}</b>
+                </p>
 
-            {/* Upload from device */}
-            <button
-              type="button"
-              onClick={() => document.getElementById("imageUpload").click()}
-              className="bg-Brown text-Cream px-4 py-2 rounded-md hover:bg-Redwood transition">
-              Choose Image from Your Device
-            </button>
-
-            <input
-              type="file"
-              id="imageUpload"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-            />
-
-            {/* ✅ OR Image URL input 
-            <input
-              type="text"
-              name="image"
-              value={formData.image}
-              onChange={handleChange}
-              placeholder="Or paste an image URL (e.g. https://example.com/photo.jpg)"
-              className="border p-2 rounded-md w-full mt-3"
-            />*/}
-
-            {/* ✅ Preview */}
-            {formData.image && (
-              <div className="mt-3">
-                <img
-                  src={formData.image}
-                  alt="Preview"
-                  className="w-32 h-32 object-cover rounded-md border"/>
+                <StatusBadge status={p.status} />
               </div>
-            )}
-          </div>
-        </div> {/* ✅ Correctly closed this div */}
 
-        {/* ✅ Submit button */}
-        <button
-          type="submit"
-          className="mt-6 flex items-center gap-2 bg-Brown text-Cream px-4 py-2 rounded-lg hover:bg-Redwood transition" >
-          <PlusCircle size={18} />
-          {editingIndex !== null ? "Update Product" : "Add Product"}
-        </button>
-      </form>
+              {p.status === "pending" && (
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => approveProduct(p._id)}
+                    className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded"
+                  >
+                    <CheckCircle size={18} /> Approve
+                  </button>
 
-      {/* Product List */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {products.length === 0 ? (
-          <p className="text-Redwood">No products added yet.</p>
-        ) : (
-          products.map((product, index) => (
-            <div
-              key={index}
-              className="bg-yellow-50 p-4 rounded-2xl shadow-md flex flex-col justify-between">
-              {product.image && (
-                <img
-                  src={product.image}
-                  alt={product.title}
-                  className="w-full h-40 object-cover rounded-md mb-3"/>
+                  <button
+                    onClick={() => rejectProduct(p._id)}
+                    className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded"
+                  >
+                    <XCircle size={18} /> Reject
+                  </button>
+                </div>
               )}
-              <h2 className="text-xl font-semibold">{product.title}</h2>
-              <p className="text-sm text-Brown">{product.description}</p>
-              <p className="text-sm">
-                <strong>Size:</strong> {product.size || "—"}
-              </p>
-              <p className="text-sm">
-                <strong>Color:</strong> {product.color || "—"}
-              </p>
-
-              <div className="flex justify-between mt-4">
-                <button
-                  onClick={() => handleEdit(index)}
-                  className="flex items-center gap-1 bg-Brown text-Beige px-3 py-1 rounded-md hover:bg-Redwood">
-                  <Pencil size={16} /> Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(index)}
-                  className="flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-400">
-                  <Trash size={16} /> Delete
-                </button>
-              </div>
             </div>
-          ))
-        )}
+          </div>
+        ))}
       </div>
     </div>
   );
-};
+}
 
-export default ProductManager;
+function StatusBadge({ status }) {
+  if (status === "approved") {
+    return (
+      <span className="inline-flex items-center gap-1 text-green-700">
+        <CheckCircle size={16} /> Approved
+      </span>
+    );
+  }
+  if (status === "rejected") {
+    return (
+      <span className="inline-flex items-center gap-1 text-red-600">
+        <XCircle size={16} /> Rejected
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center gap-1 text-yellow-700">
+      <Clock size={16} /> Pending
+    </span>
+  );
+}

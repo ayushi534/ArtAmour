@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import ProductForm from "../../Components/productform";
+import ProductForm from "../../components/product/productForm";
 import { fetchProductById, updateProduct } from "../../Api/productApi";
 
 export default function EditProduct() {

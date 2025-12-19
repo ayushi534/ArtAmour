@@ -6,8 +6,6 @@ const Admin = require("../models/adminModel");
 exports.protect = async (req, res, next) => {
   try {
     let token;
-
-    // ✅ ONLY Bearer token (frontend already uses this)
     if (
       req.headers.authorization &&
       req.headers.authorization.startsWith("Bearer")
@@ -24,7 +22,7 @@ exports.protect = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // 🔴 MUST HAVE role
+    //  MUST HAVE role
     if (!decoded.role || !decoded.id) {
       return res.status(401).json({
         success: false,
@@ -32,19 +30,21 @@ exports.protect = async (req, res, next) => {
       });
     }
 
-    // 🔹 ADMIN
+    //  ADMIN
     if (decoded.role === "admin") {
-      req.admin = await Admin.findById(decoded.id).select("-password");
+      req.admin = await Admin
+      .findById(decoded.id)
+      .select("-password");
       if (!req.admin) throw new Error("Admin not found");
     }
 
-    // 🔹 SELLER
+    //  SELLER
     if (decoded.role === "seller") {
       req.seller = await Seller.findById(decoded.id).select("-password");
       if (!req.seller) throw new Error("Seller not found");
     }
 
-    // 🔹 USER
+    //USER
     if (decoded.role === "user") {
       req.user = await User.findById(decoded.id).select("-password");
       if (!req.user) throw new Error("User not found");
@@ -61,14 +61,16 @@ exports.protect = async (req, res, next) => {
 
 // ✅ SELLER ONLY
 exports.isSeller = (req, res, next) => {
-  if (!req.seller) {
+  if (req.seller) {
+    next();
+  } else {
     return res.status(403).json({
       success: false,
       message: "Seller access required",
     });
   }
-  next();
 };
+
 
 // ✅ ADMIN ONLY
 exports.isAdmin = (req, res, next) => {

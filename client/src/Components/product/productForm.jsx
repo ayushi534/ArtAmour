@@ -1,6 +1,6 @@
 // src/Components/ProductForm.jsx
 import React, { useState, useEffect, useRef } from "react";
-import ProductCategoryPicker from "./productCategoryPicker";
+import ProductCategoryPicker from "./ProductCategoryPicker";
 
 export default function ProductForm({ onSubmit, loading = false, initial = {} }) {
 

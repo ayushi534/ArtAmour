@@ -1,38 +1,57 @@
-// AdminDashboard.jsx
-import React from "react";
-import { Routes, Route } from "react-router-dom";
-import AdminNavbar from "./AdminNav";
-import AdminSidebar from "./AdminSidebar";
-import ProductManager from "./ProductManager";
-// Import placeholder components for other pages
-const DashboardHome = () => <h2>Welcome to Admin Dashboard</h2>;
-const Orders = () => <h2>Orders Page</h2>;
-const Reports = () => <h2>Reports Page</h2>;
+import { useEffect, useState } from "react";
+import { PackageCheck, Store, Users , ShoppingBag } from "lucide-react";
+import API from "../../utils/api"
 
-const AdminDashboard = () => {
+export default function AdminDashboard() {
+  const [stats , setStats] = useState(null);
+
+  useEffect(() =>{
+    API.get("/admin/dashboard-stats")
+    .then(res => setStats(res.data))
+    .catch(err => console.error(err));
+  }, []);
+
+  if (!stats){
+    return <p className="text-Brown">Loading dashboard...</p>
+  }
+  
   return (
-    <div className="flex min-h-screen bg-Cream">
-      {/* Sidebar */}
-      <AdminSidebar />
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <StatCard 
+      icon={<PackageCheck />} 
+      title="Total Products" 
+      value={stats.totalProducts} />
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        <AdminNavbar />
+      <StatCard 
+      icon={<Store />} 
+      title="Active Sellers" 
+      value={stats.activeSellers} />
 
-        {/* Route outlet */}
-        <div className="p-6">
-          <Routes>
-            <Route path="/" element={<DashboardHome />} />
-            <Route path="products" element={<ProductManager />} />
-            <Route path="orders" element={<Orders />} />
-            <Route path="reports" element={<Reports />} />
-            {/* Optional: 404 for unmatched paths */}
-            <Route path="*" element={<h2>Page Not Found</h2>} />
-          </Routes>
-        </div>
-      </div>
+      <StatCard 
+      icon={<Users />} 
+      title="Users" 
+      alue={stats.users} />
+
+      <StatCard 
+      icon={<ShoppingBag />} 
+      title="Orders" 
+      value={stats.orders || 0} />
+
     </div>
   );
-};
+}
 
-export default AdminDashboard;
+function StatCard({ icon, title, value }) {
+  return (
+    <div className="bg-[#ffebd6] border border-[#C6A664] p-6 rounded-lg shadow">
+      <div className="flex items-center gap-3 text-[#4E342E]">
+        {icon}
+        <h3 className="font-medium">{title}</h3>
+      </div>
+      <p className="text-3xl font-bold text-[#b84300] mt-4">
+        {value}
+      </p>
+    </div>
+  );
+}
+

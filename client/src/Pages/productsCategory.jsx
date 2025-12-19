@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import API from "../utils/api";
-import ProductCard from "../Components/productCard"; // your product card component
+import ProductCard from "../components/product/productCard"; // your product card component
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);

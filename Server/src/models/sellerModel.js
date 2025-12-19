@@ -42,6 +42,11 @@ const sellerSchema = new Schema({
     },
   },
 
+  role: {
+    type: String,
+    default: "seller"
+  },
+
   dob: {
     type: Date,
   },

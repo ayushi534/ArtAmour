@@ -1,10 +1,10 @@
 // src/App.jsx
 import React from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import Navbar from "./Components/Navbar";
-import Navigation from "./Components/Navigation";
-import Footer from "./Components/Footer";
-import Landingpage from "./Components/Landingpage";
+import Navbar from "./components/Navbar";
+import Navigation from "./components/Navigation";
+import Footer from "./components/Footer";
+import Landingpage from "./components/Landingpage";
 import ProductsCategory from "./Pages/productsCategory";
 import Pagenotfound from "./Pages/Pagenotfound";
 
@@ -15,24 +15,31 @@ import Signup from "./Pages/User/Signup";
 // Seller pages & layout
 import SellerLogin from "./Pages/Seller/sellerLogin";
 import SellerSignup from "./Pages/Seller/sellerSignup";
-import SellerDashboardLayout from "./Pages/Seller/SellerDashboardLayout"; 
-import SellerDashboard from "./Pages/Seller/sellerDashboard"; 
+import SellerLayout from "./Pages/Seller/dashboard/selleLayout"; 
+import SellerDashboard from "./Pages/Seller/dashboard/sellerDashboard"; 
 import SellerProducts from "./Pages/Seller/sellerProducts"; 
-import AddProduct from "./Pages/Seller/addProduct"; 
+import SellerAddProduct from "./Pages/Seller/addProduct"; 
 import EditProduct from "./Pages/Seller/editProduct"; 
-
+import SellerProductManager from "./Pages/Seller/sellerProductManager" 
+import SellerProductApproval from "./Pages/Admin/sellerProductApproval";
 // Admin
 import AdminDashboard from "./Pages/Admin/AdminDashboard";
 import AdminRegister from "./Pages/Admin/adminRegister"
 import AdminLogin from './Pages/Admin/adminLogin';
 import ProductManager from "./Pages/Admin/ProductManager";
-import ProtectedRoute from './Components/protectedRoute';
+import ProtectedRoute from './components/protectedRoute';
+import AdminLayout from "./Pages/Admin/adminLayout";
+import AdminAddProduct from "./Pages/Admin/adminAddProduct";
+
 
 //products
-import ProductsPage from "./Pages/Product/productPage"; 
+import ProductsPage from "./Pages/Product/productPage";
+
+
+
 // Other components/pages
 
-import ContactPage from "./Components/contact"; 
+import ContactPage from "./components/contact"; 
 
 export default function App() {
   const location = useLocation();
@@ -64,12 +71,13 @@ export default function App() {
         <Route path="/seller/signup" element={<SellerSignup />} />
 
         {/* Seller area (uses SellerDashboardLayout with its own header/sidebar) */}
-        <Route path="/seller" element={<SellerDashboardLayout />}>
-          <Route index element={<SellerDashboard />} />
+        <Route path="/seller" element={<SellerLayout />}>
           <Route path="dashboard" element={<SellerDashboard />} />
           <Route path="products" element={<SellerProducts />} />
-          <Route path="products/new" element={<AddProduct />} />
+          <Route path="product-manager" element={<SellerProductManager/>}/>
+          <Route path="products/new" element={<SellerAddProduct />} />
           <Route path="products/edit/:id" element={<EditProduct />} />
+
           {/* add other seller routes here (orders, profile, etc) */}
         </Route>
 
@@ -80,13 +88,20 @@ export default function App() {
         
         {/* Admin area */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/admin/*" element={<AdminDashboard />} />
-          <Route path="/admin/register" element={<AdminRegister />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="product-manager" element={<ProductManager/>} />
+            <Route path="seller-products" element={<SellerProductApproval />} />
+          </Route>
         </Route>
       
         {/* Admin product manager (if separate route) */}
-        <Route path="/admin/products" element={<ProductManager />} />
+        <Route path="/admin/products" element={<AdminAddProduct />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/register" element={<AdminRegister />} />
+      
+
+        
 
         {/* 404 */}
         <Route path="*" element={<Pagenotfound />} />

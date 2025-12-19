@@ -10,19 +10,19 @@ API.interceptors.request.use((config) => {
 
   let token = null;
 
-  // USER APIs
-  if (url.startsWith("/user")) {
-    token = localStorage.getItem("token");
+  // ADMIN APIs
+  if (url.startsWith("/admin")) {
+    token = localStorage.getItem("adminToken");
   }
 
   // SELLER APIs
-  else if (url.startsWith("/products") || url.startsWith("/seller")) {
+  else if (url.startsWith("/seller")) {
     token = localStorage.getItem("sellerToken");
   }
 
-  // ADMIN APIs
-  else if (url.startsWith("/admin")) {
-    token = localStorage.getItem("adminToken");
+  // USER APIs
+  else if (url.startsWith("/user")) {
+    token = localStorage.getItem("token");
   }
 
   if (token) {
@@ -33,7 +33,6 @@ API.interceptors.request.use((config) => {
 });
 
 export default API;
-
 
 
 
