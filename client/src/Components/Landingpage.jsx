@@ -1,10 +1,12 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import Image from "../assets/data";
 import Categorycards from "./categoryCards";
 
 
 
 const Landingpage = () => {
+  const navigate = useNavigate(); 
   return (
     <div className="min-h-screen bg-Brown text-Beige font-sans flex flex-col">
       {/* 🔹 Hero Section */}
@@ -30,9 +32,11 @@ const Landingpage = () => {
             that breathe warmth and emotion into your space-crafted by passionate 
             artists around the world.
           </p>
-          <button className="bg-Beige text-Brown px-8 py-3 rounded-full font-semibold hover:bg-yellow-50 transition mt-4">
-            Explore Collections
-          </button>
+            <button
+              onClick={() => navigate("/collections")}
+              className="bg-Beige text-Brown px-8 py-3 rounded-full font-semibold hover:bg-yellow-50 transition mt-4">
+              Explore Collections
+            </button>
         </div>
       </section>
 

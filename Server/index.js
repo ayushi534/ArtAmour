@@ -44,10 +44,13 @@ const categoryItemRoutes = require("./src/Routes/categoryItemsRoute");
 
 const productRoutes = require("./src/Routes/productroutes");
 const sellerProductsRoutes = require("./src/Routes/sellerProductRoutes");
+const sellerRequestRoutes = require("./src/Routes/sellerProductRequestRoutes")
+
 
 
 const adminProductRoutes = require("./src/Routes/adminProductRoutes");
 const adminSellerProductRoutes = require("./src/Routes/adminSellerProductRoutes");
+const adminProductRequestRoutes = require( "./src/Routes/adminProductRequestRoutes");
 
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
@@ -62,17 +65,23 @@ app.use("/api/cart", cartRoute);
 //seller
 app.use("/api/seller", sellerRoute);
 app.use("/api/seller/products", sellerProductsRoutes);
+app.use("/api/seller", sellerRequestRoutes);
+
 
 //admin
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin/products", adminProductRoutes);
 app.use("/api/admin/seller-products", adminSellerProductRoutes);
+app.use("/api/admin", adminProductRequestRoutes);
+app.use("/api/seller", sellerRequestRoutes);
 
 
 //products
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/category-items", categoryItemRoutes);
+
+
 
 
 app.use((req, res) => {

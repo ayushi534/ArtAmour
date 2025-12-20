@@ -7,6 +7,7 @@ import Footer from "./components/Footer";
 import Landingpage from "./components/Landingpage";
 import ProductsCategory from "./Pages/productsCategory";
 import Pagenotfound from "./Pages/Pagenotfound";
+import Collections from "./Pages/collections";
 
 // Auth / user pages
 import Signin from "./Pages/User/Signin";
@@ -20,8 +21,9 @@ import SellerDashboard from "./Pages/Seller/dashboard/sellerDashboard";
 import SellerProducts from "./Pages/Seller/sellerProducts"; 
 import SellerAddProduct from "./Pages/Seller/addProduct"; 
 import EditProduct from "./Pages/Seller/editProduct"; 
-import SellerProductManager from "./Pages/Seller/sellerProductManager" 
-import SellerProductApproval from "./Pages/Admin/sellerProductApproval";
+import SellerProductManager from "./Pages/Seller/sellerProductManager"
+import SellerProductRequest from "./Pages/Seller/sellerProductRequest"
+
 // Admin
 import AdminDashboard from "./Pages/Admin/AdminDashboard";
 import AdminRegister from "./Pages/Admin/adminRegister"
@@ -30,10 +32,12 @@ import ProductManager from "./Pages/Admin/ProductManager";
 import ProtectedRoute from './components/protectedRoute';
 import AdminLayout from "./Pages/Admin/adminLayout";
 import AdminAddProduct from "./Pages/Admin/adminAddProduct";
+import AdminProductRequests from "./Pages/Admin/AdminProductRequests";
 
 
 //products
 import ProductsPage from "./Pages/Product/productPage";
+import ProductDetail from "./Pages/Product/productDetail";
 
 
 
@@ -64,6 +68,7 @@ export default function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/contact" element={<ContactPage />} />
+        <Route path="/collections" element={<Collections />} />
         
 
         {/* Seller auth (separate, not nested under layout) */}
@@ -77,31 +82,31 @@ export default function App() {
           <Route path="product-manager" element={<SellerProductManager/>}/>
           <Route path="products/new" element={<SellerAddProduct />} />
           <Route path="products/edit/:id" element={<EditProduct />} />
-
-          {/* add other seller routes here (orders, profile, etc) */}
+          <Route path="/seller/product-request"element={<SellerProductRequest />}/>
+          
         </Route>
 
         {/*product category*/}
         {/*<Route path="/products" element={<ProductsCategory />} />*/}
         <Route path="/category/:slug" element={<ProductsCategory />} />
-        <Route path="/products" element={<ProductsPage />} /> 
-        
-        {/* Admin area */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="product-manager" element={<ProductManager/>} />
-            <Route path="seller-products" element={<SellerProductApproval />} />
-          </Route>
-        </Route>
-      
-        {/* Admin product manager (if separate route) */}
-        <Route path="/admin/products" element={<AdminAddProduct />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/register" element={<AdminRegister />} />
-      
+        <Route path="/products" element={<ProductsPage />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
 
         
+        {/* Admin area */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/register" element={<AdminRegister />} />
+
+       {/* 🔐 PROTECTED ADMIN ROUTES */}
+        <Route element={<ProtectedRoute role="admin" />}>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="dashboard" element={<AdminDashboard />} />
+            <Route path="product-requests" element={<AdminProductRequests />} />
+            <Route path="product-manager" element={<ProductManager />} />
+            <Route path="products" element={<AdminAddProduct />} />
+          </Route>
+        </Route>
 
         {/* 404 */}
         <Route path="*" element={<Pagenotfound />} />

@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Product = require('../models/productModel');
+ const SellerProduct = require("../models/sellerProductModel")
 const Category = require('../models/categoryModels')
 
 
@@ -197,7 +198,7 @@ const deleteProduct = async (req, res) => {
 const getProductsByCategory = async (req, res) => {
   const { categoryId } = req.params;
 
-  const products = await Product.find({
+  const products = await SellerProduct.find({
     category: categoryId,
     status: "active",
   })
@@ -206,9 +207,34 @@ const getProductsByCategory = async (req, res) => {
   res.status(200).json(products);
 };
 
+const getApprovedProducts = asyncHandler(async (req, res) => {
+  try {
+    const products = await SellerProduct.find({
+      status: "approved",
+      isActive: true,
+    })
+      .populate("product") // master product info
+      .populate("seller", "name")
+      .populate("category")
+      .populate("subCategory")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: products.length,
+      products,
+    });
+  } catch (error) {
+    console.error("getApprovedProducts error:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
 
 
-module.exports ={ getAllProducts, getProductById, createProduct, getMyProducts ,updateProduct, deleteProduct, getProductsByCategory}
+module.exports ={ getAllProducts, getProductById, createProduct, getMyProducts ,updateProduct, deleteProduct, getProductsByCategory, getApprovedProducts}
 
 
 

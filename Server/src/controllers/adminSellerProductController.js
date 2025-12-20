@@ -9,7 +9,7 @@ const listSellerProductsForAdmin = asyncHandler(async (req, res) => {
     .populate("seller", "name email shopName")
     .sort({ createdAt: -1 });
 
-  res.status(200).json({
+  res.json({
     success: true,
     sellerProducts,
   });
@@ -20,12 +20,11 @@ const approveSellerProduct = asyncHandler(async (req, res) => {
   const sellerProduct = await SellerProduct.findById(req.params.id);
 
   if (!sellerProduct) {
-    res.status(404);
-    throw new Error("Seller product not found");
+    return res.status(404).json({ message: "Seller product not found" });
   }
 
   sellerProduct.status = "approved";
-  sellerProduct.isActive = false;
+  sellerProduct.isActive = true;
   sellerProduct.adminNote = null;
 
   await sellerProduct.save();
@@ -40,16 +39,14 @@ const approveSellerProduct = asyncHandler(async (req, res) => {
 const rejectSellerProduct = asyncHandler(async (req, res) => {
   const { note } = req.body;
 
-  if (!note) {
-    res.status(400);
-    throw new Error("Rejection note required");
+  if (!note || note.trim().length < 3) {
+    return res.status(400).json({ message: "Rejection note required" });
   }
 
   const sellerProduct = await SellerProduct.findById(req.params.id);
 
   if (!sellerProduct) {
-    res.status(404);
-    throw new Error("Seller product not found");
+    return res.status(404).json({ message: "Seller product not found" });
   }
 
   sellerProduct.status = "rejected";

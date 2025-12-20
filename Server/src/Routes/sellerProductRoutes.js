@@ -10,10 +10,19 @@ const {
 
 const { protect, isSeller } = require("../middleware/authMiddleware");
 
+// ---------------- Seller Routes ---------------- //
+
+// Create a new product request
 router.post("/", protect, isSeller, createSellerProduct);
+
+// Get seller's own products
 router.get("/me", protect, isSeller, getMySellerProducts);
-router.patch("/:id/toggle", protect, isSeller, toggleSellerProduct);
+
+// Update a seller product (price, stock, discount)
 router.put("/:id", protect, isSeller, updateSellerProduct);
+
+// Toggle product visibility (activate/deactivate)
+router.patch("/:id/toggle", protect, isSeller, toggleSellerProduct);
 
 module.exports = router;
 

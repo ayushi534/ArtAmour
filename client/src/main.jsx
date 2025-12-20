@@ -1,10 +1,13 @@
+// src/main.jsx (unified)
 import React from "react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import { AuthProvider } from "./context/authContext.jsx"; // fixed path & file name
-import "./index.css";
 import App from "./App.jsx";
+import { AuthProvider } from "./context/authContext.jsx";
+import { CartWishlistProvider } from "./context/cartWishlistContext.jsx";
+import "./index.css";
+
 
 const container = document.getElementById("root");
 const root = createRoot(container);
@@ -13,10 +16,13 @@ root.render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <CartWishlistProvider>
+          <App />
+        </CartWishlistProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>
 );
+
 
 

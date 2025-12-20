@@ -1,12 +1,17 @@
-// routes/wishlistRoutes.js
 const express = require("express");
 const router = express.Router();
-const wishlistCtrl = require("../controllers/wishlistControlers");
-const { protect } = require("../middleware/authMiddleware"); // implement verifyAuth
+const {
+  addToWishlist,
+  getWishlist,
+  getWishlistCount,
+  removeFromWishlist,
+} = require("../controllers/wishlistControllers");
+const { protect } = require("../middleware/authMiddleware");
 
-router.post("/", protect, wishlistCtrl.addToWishlist);
-router.delete("/:productId", protect, wishlistCtrl.removeFromWishlist);
-router.get("/", protect, wishlistCtrl.getWishlist);
-router.get("/count", protect, wishlistCtrl.countWishlist);
+router.post("/add", protect, addToWishlist);
+router.get("/", protect, getWishlist);
+router.get("/count", protect, getWishlistCount);
+router.delete("/remove/:productId", protect, removeFromWishlist);
 
 module.exports = router;
+

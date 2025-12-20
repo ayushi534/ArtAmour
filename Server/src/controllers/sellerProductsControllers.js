@@ -2,66 +2,62 @@ const asyncHandler = require("express-async-handler");
 const SellerProduct = require("../models/sellerProductModel");
 
 // Seller creates product listing
-const createSellerProduct = async (req, res) => {
-  try {
-    const { productId, price, stock, discountPercent } = req.body;
+const createSellerProduct = asyncHandler(async (req, res) => {
+  const { productId, price, stock, discountPercent } = req.body;
 
-    const sellerProduct = await SellerProduct.create({
-      product: productId,
-      seller:req.seller._id,
-      price,
-      stock,
-      discountPercent,
-      status: "pending",   // 👈 default, but explicit
-      isActive: false,     // 👈 default, but explicit
-    });
-
-    res.status(201).json({
-      message: "Product submitted for admin approval",
-      sellerProduct,
-    });
-  } catch (error) {
-    res.status(400).json({
-      message: "Product already added or invalid data",
-      error: error.message,
+  // 1️⃣ Ensure required fields
+  if (!productId || price == null || stock == null) {
+    return res.status(400).json({
+      message: "Product, price, and stock are required",
     });
   }
-};
 
-
-const getMySellerProducts = asyncHandler(async (req, res) => {
-  const products = await SellerProduct.find({
-    seller: req.seller._id,
-  }).populate("product", "name basePrice");
-
-  res.json(products);
-});
-
-const toggleSellerProduct = asyncHandler(async (req, res) => {
-  const { isActive } = req.body;
-
-  const sellerProduct = await SellerProduct.findOne({
-    _id: req.params.id,
-    seller: req.seller._id,
-  });
-
-  if (!sellerProduct)
-    return res.status(404).json({ message: "Not found" });
-
-  if (sellerProduct.status !== "approved")
+  // 2️⃣ Ensure seller exists
+  if (!req.seller) {
     return res.status(403).json({
-      message: "Product not approved by admin",
+      message: "Seller authentication required",
     });
+  }
 
-  sellerProduct.isActive = isActive;
-  await sellerProduct.save();
+  // 3️⃣ Prevent duplicate product for same seller
+  const existing = await SellerProduct.findOne({
+    seller: req.seller._id,
+    product: productId,
+  });
 
-  res.json({
-    message: "Product visibility updated",
-    isActive: sellerProduct.isActive,
+  if (existing) {
+    return res.status(400).json({
+      message: "You already submitted this product",
+    });
+  }
+
+  // 4️⃣ Create product request (pending approval)
+  const sellerProduct = await SellerProduct.create({
+    product: productId,
+    seller: req.seller._id,
+    price,
+    stock,
+    discountPercent: discountPercent || 0,
+    status: "pending",    // admin approval required
+    isActive: false,      // seller can activate after approval
+  });
+
+  res.status(201).json({
+    message: "Product submitted for admin approval",
+    sellerProduct,
   });
 });
 
+// Get seller's products
+const getMySellerProducts = asyncHandler(async (req, res) => {
+  const products = await SellerProduct.find({ seller: req.seller._id })
+    .populate("product", "name basePrice images")
+    .sort({ createdAt: -1 });
+
+  res.json({ success: true, products });
+});
+
+// Update product (price, stock, discount)
 const updateSellerProduct = asyncHandler(async (req, res) => {
   const { price, stock, discountPercent } = req.body;
 
@@ -70,8 +66,7 @@ const updateSellerProduct = asyncHandler(async (req, res) => {
     seller: req.seller._id,
   });
 
-  if (!sellerProduct)
-    return res.status(404).json({ message: "Not found" });
+  if (!sellerProduct) return res.status(404).json({ message: "Not found" });
 
   sellerProduct.price = price ?? sellerProduct.price;
   sellerProduct.stock = stock ?? sellerProduct.stock;
@@ -79,30 +74,54 @@ const updateSellerProduct = asyncHandler(async (req, res) => {
     discountPercent ?? sellerProduct.discountPercent;
 
   await sellerProduct.save();
-  res.json(sellerProduct);
+  res.json({ message: "Product updated", sellerProduct });
 });
 
-const getPendingSellerProducts = async (req, res) => {
+// Toggle product visibility
+const toggleSellerProduct = asyncHandler(async (req, res) => {
+  const { isActive } = req.body;
+
+  const sellerProduct = await SellerProduct.findOne({
+    _id: req.params.id,
+    seller: req.seller._id,
+  });
+
+  if (!sellerProduct) return res.status(404).json({ message: "Not found" });
+
+  if (sellerProduct.status !== "approved") {
+    return res.status(403).json({
+      message: "Product not approved by admin",
+    });
+  }
+
+  sellerProduct.isActive = !!isActive;
+  await sellerProduct.save();
+
+  res.json({
+    message: "Product visibility updated",
+    isActive: sellerProduct.isActive,
+  });
+});
+
+// Admin: get all pending products
+const getPendingSellerProducts = asyncHandler(async (req, res) => {
   const products = await SellerProduct.find({ status: "pending" })
     .populate("product", "name images")
     .populate("seller", "name email");
 
-  res.json(products);
-};
+  res.json({ success: true, products });
+});
 
-const updateSellerProductStatus = async (req, res) => {
+// Admin: approve/reject seller product
+const updateSellerProductStatus = asyncHandler(async (req, res) => {
   const { status } = req.body; // approved | rejected
 
   const sellerProduct = await SellerProduct.findById(req.params.id);
-
   if (!sellerProduct)
     return res.status(404).json({ message: "Seller product not found" });
 
   sellerProduct.status = status;
-
-  if (status === "approved") {
-    sellerProduct.isActive = false; // seller activates
-  }
+  if (status === "approved") sellerProduct.isActive = false;
 
   await sellerProduct.save();
 
@@ -110,7 +129,7 @@ const updateSellerProductStatus = async (req, res) => {
     message: `Product ${status}`,
     sellerProduct,
   });
-};
+});
 
 module.exports = {
   createSellerProduct,
@@ -118,5 +137,5 @@ module.exports = {
   updateSellerProduct,
   toggleSellerProduct,
   getPendingSellerProducts,
-  updateSellerProductStatus
+  updateSellerProductStatus,
 };
