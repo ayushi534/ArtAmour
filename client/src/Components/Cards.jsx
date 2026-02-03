@@ -1,4 +1,5 @@
 import React from "react";
+import resolveImageUrl from "../utils/imageUrl";
 const Cards = ({ item, onClick }) => {
   return (
     <div
@@ -6,7 +7,7 @@ const Cards = ({ item, onClick }) => {
       className="bg-yellow-50 rounded-2xl shadow-lg hover:shadow-2xl transition duration-150 transform hover:-translate-y-2 cursor-pointer"
     >
       <img
-        src={item.image}
+        src={resolveImageUrl(item.image)}
         alt={item.title}
         className="w-full h-64 sm:h-72 md:h-80 lg:h-80 object-cover rounded-t-2xl"
       />
@@ -26,4 +27,3 @@ const Cards = ({ item, onClick }) => {
 };
 
 export default Cards;
-

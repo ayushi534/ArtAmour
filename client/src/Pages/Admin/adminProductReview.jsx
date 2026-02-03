@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { fetchProductForAdmin, approveProductApi, rejectProductApi } from "../../Api/productApi";
+import resolveImageUrl from "../../utils/imageUrl";
 
 export default function AdminProductReview() {
   const { id } = useParams();
@@ -54,7 +55,7 @@ export default function AdminProductReview() {
       <div className="grid md:grid-cols-2 gap-6">
         <div>
           {(product.images && product.images.length) ? (
-            <img src={product.images[0]} alt={product.name} className="w-full h-72 object-cover rounded" />
+            <img src={resolveImageUrl(product.images[0])} alt={product.name} className="w-full h-72 object-cover rounded" />
           ) : <div className="w-full h-72 bg-gray-100 rounded flex items-center justify-center">No image</div>}
         </div>
         <div>

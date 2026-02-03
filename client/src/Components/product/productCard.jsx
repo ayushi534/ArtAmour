@@ -1,10 +1,11 @@
  // src/components/ProductCard.jsx
 import React from "react";
+import resolveImageUrl from "../../utils/imageUrl";
 export default function ProductCard({ product }) {
   return (
 
 <div className="bg-[#ffebd6] p-4 rounded-xl shadow-md">
-  <img src={product.images[0]} className="h-48 w-full rounded-lg"/>
+  <img src={resolveImageUrl(product.images?.[0])} className="h-48 w-full rounded-lg"/>
 
   <h3 className="text-[#4E342E] font-bold">{product.name}</h3>
   <p className="text-sm">{product.description}</p>

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import API, { addToCart, addToWishlist } from "../../utils/api";
 import { Heart } from "lucide-react";
 import { useCartWishlist } from "../../context/cartWishlistContext";
+import resolveImageUrl from "../../utils/imageUrl";
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -43,7 +44,7 @@ const ProductDetail = () => {
     <div className="min-h-screen bg-Beige px-6 py-16 flex gap-10">
       <div className="flex-1">
         {product.images?.map((img, idx) => (
-          <img key={idx} src={img} alt={product.name} className="rounded-xl mb-4" />
+          <img key={idx} src={resolveImageUrl(img)} alt={product.name} className="rounded-xl mb-4" />
         ))}
       </div>
 

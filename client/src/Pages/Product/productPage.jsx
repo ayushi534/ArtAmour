@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import API from "../../utils/api";
+import resolveImageUrl from "../../utils/imageUrl";
 
 export default function Products() {
   const location = useLocation();
@@ -57,7 +58,7 @@ export default function Products() {
         {products.map((p) => (
           <div key={p._id} className="border rounded-lg shadow-sm">
             <img
-              src={p.images?.[0] || "/images/placeholder.jpg"}
+              src={resolveImageUrl(p.images?.[0]) || "/images/placeholder.jpg"}
               alt={p.name}
               className="w-full h-56 object-cover"
             />

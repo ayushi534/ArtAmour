@@ -6,6 +6,7 @@ import {
   rejectProductApi
 } from "../../Api/productApi";
 import { useNavigate } from "react-router-dom";
+import resolveImageUrl from "../../utils/imageUrl";
 
 export default function AdminProductsList() {
   const [products, setProducts] = useState([]);
@@ -89,7 +90,10 @@ export default function AdminProductsList() {
               <div key={p._id} className="bg-white rounded-lg shadow p-4 flex flex-col">
                 <div className="h-44 w-full bg-gray-100 rounded overflow-hidden mb-3">
                   <img
-                    src={(p.images && p.images[0]) || "/assets/default-product.png"}
+                    src={
+                      resolveImageUrl(p.images?.[0]) ||
+                      "/assets/default-product.png"
+                    }
                     alt={p.name}
                     className="object-cover w-full h-full"
                   />
