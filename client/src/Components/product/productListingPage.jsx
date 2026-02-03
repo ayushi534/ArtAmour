@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import resolveImageUrl from "../../utils/imageUrl";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
@@ -39,7 +40,7 @@ export default function Home() {
             }}
           >
             <img
-              src={item.product.images?.[0]}
+              src={resolveImageUrl(item.product.images?.[0])}
               alt={item.product.name}
               style={{ width: "100%", height: "150px", objectFit: "cover" }}
             />

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import API, { addToCart, addToWishlist } from "../utils/api";
 import { Heart, ShoppingCart } from "lucide-react";
 import { useCartWishlist } from "../../src/context/cartWishlistContext";
+import resolveImageUrl from "../utils/imageUrl";
 
 const Collections = () => {
   const [products, setProducts] = useState([]);
@@ -82,7 +83,7 @@ const Collections = () => {
 
             <Link to={`/product/${product.id}`}>
               <img
-                src={product.images?.[0]}
+                src={resolveImageUrl(product.images?.[0])}
                 alt={product.name}
                 className="h-60 w-full object-cover rounded-t-xl"
               />
@@ -125,7 +126,6 @@ const Collections = () => {
 };
 
 export default Collections;
-
 
 
 

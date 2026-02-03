@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import API from "../../utils/api";
 import { Link, useNavigate } from "react-router-dom";
+import resolveImageUrl from "../../utils/imageUrl";
 
 export default function SellerProducts() {
   const [products, setProducts] = useState([]);
@@ -51,7 +52,7 @@ export default function SellerProducts() {
               {/* Product Image */}
               <img
                 src={
-                  p.product?.images?.[0] ||
+                  resolveImageUrl(p.product?.images?.[0]) ||
                   "/assets/default-product.png"
                 }
                 alt={p.product?.name}
@@ -121,6 +122,5 @@ export default function SellerProducts() {
     </div>
   );
 }
-
 
 
